@@ -21,8 +21,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.utils.Array;
 //import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.Preferences;
@@ -46,18 +49,24 @@ public class GameScreen_2 implements Screen {
    private Texture i_shield_t;
    private TextureRegion i_shield_tr;
    
+   private Texture infobubble_1;
+   
    private SpriteBatch batch;
    private OrthographicCamera camera;
    
    
    private Rectangle dot;
+   private Rectangle actual_dot;
+   
    private Rectangle ship;
+   private Circle inner_circle;
+   private Circle outer_circle;
    
    private Array<Rectangle> mines;
    private Array<Kaboom> explosions;
    private Array<Kaboom> horizontal_i_shields;
    private Array<Kaboom> vertical_i_shields;
-   private Array<PolyKaboom> linear_i_shields;
+   private Array<PolyKaboom> general_i_shields;
    
    private Rectangle grid;
    private Array<Rectangle> shields;
@@ -66,6 +75,11 @@ public class GameScreen_2 implements Screen {
    private double posn_y;
    private double rounded_posn_x;
    private double rounded_posn_y;
+   
+   private double prev_rounded_posn_x;
+   private double prev_rounded_posn_y;
+   
+   private double rotdeg;
    
    private Rectangle menu_button_r;
    private Texture menu_button_t;
@@ -94,8 +108,6 @@ public class GameScreen_2 implements Screen {
    
    private double UNIT_LENGTH_IN_PIXELS;
    private String CURRENT_LINE;
-   
-   
    
    public String MODE;
    public String GENRE;
@@ -134,7 +146,7 @@ public class GameScreen_2 implements Screen {
       i_shield_t=new Texture(Gdx.files.internal("intercept_shield.png"));
       i_shield_tr=new TextureRegion(i_shield_t);
       
-      
+      infobubble_1=new Texture(Gdx.files.internal("infobubble_1.png"));
       
       shipImages[0] = new Texture(Gdx.files.internal("Head.png"));
       shipImages[1] = new Texture(Gdx.files.internal("Head_1_1.png"));
@@ -153,6 +165,15 @@ public class GameScreen_2 implements Screen {
       
       //--Set zeroes to zero--
       score=MINESPEED/5;
+      
+      posn_x=0;
+      posn_y=0;
+      rounded_posn_x=0;
+      rounded_posn_y=0;
+      
+      prev_rounded_posn_x=0;
+      prev_rounded_posn_y=0;
+      
       total_time=0;
       seconds=0;
       wastouched=false;
@@ -167,6 +188,10 @@ public class GameScreen_2 implements Screen {
       dot.x = 0;
       dot.y = 0;
       
+      actual_dot = new Rectangle();
+      actual_dot.x = 0;
+      actual_dot.y = 0;
+      
       ship = new Rectangle(0,0, 320, 60);
       grid = new Rectangle();
       
@@ -176,13 +201,14 @@ public class GameScreen_2 implements Screen {
       explosions = new Array<Kaboom>();
       horizontal_i_shields = new Array<Kaboom>();
       vertical_i_shields = new Array<Kaboom>();
+      general_i_shields = new Array<PolyKaboom>();
       
       //--Set up basics--
       spawnShield(1);
       //spawnShield(2);
       //spawnShield(3);
       font = new BitmapFont();
-      font.setColor(Color.BLACK);
+      font.setColor(Color.CYAN);
       dotfunction_font = new BitmapFont();
       dotfunction_font.setColor(Color.BLACK);
       maxcharges=6;
@@ -209,6 +235,12 @@ public class GameScreen_2 implements Screen {
 	   int coin=MathUtils.random(0,1);
 	   return coin*2-1;
    }
+   
+   private boolean Rectangle_collides_with_Polygon(Rectangle rec, Polygon pol) {
+	   float[] rp_input=new float[]{rec.x, rec.y, rec.x+rec.width, rec.y, rec.x+rec.width, rec.y+rec.height, rec.x, rec.y+rec.height};
+	   Polygon recpol=new Polygon(rp_input);
+	   return Intersector.overlapConvexPolygons(pol, recpol);
+	}
   
    //--Game functions--
    
@@ -250,13 +282,11 @@ public class GameScreen_2 implements Screen {
 	   
    }
    
-   //(This creates the dot which actually detonates mines. Not to be confused with mirroring.)
    private void spawn_horizontal_i_shield(float x,float y) {
- 	   System.out.println("Cui bono?");
 	   Kaboom horizontal_i_shield = new Kaboom();
 	   horizontal_i_shield.birthtime=total_time;
 	   horizontal_i_shield.rect= new Rectangle();
-	   horizontal_i_shield.rect.width = 500;
+	   horizontal_i_shield.rect.width = 1000;
 	   horizontal_i_shield.rect.height = 5;
 	   horizontal_i_shield.rect.x=x;
 	   horizontal_i_shield.rect.y=y;
@@ -265,15 +295,27 @@ public class GameScreen_2 implements Screen {
    }
    
    private void spawn_vertical_i_shield(float x,float y) {
- 	   System.out.println("Cui bono?");
 	   Kaboom vertical_i_shield = new Kaboom();
 	   vertical_i_shield.birthtime=total_time;
 	   vertical_i_shield.rect= new Rectangle();
 	   vertical_i_shield.rect.width = 5;
-	   vertical_i_shield.rect.height = 500;
+	   vertical_i_shield.rect.height = 1000;
 	   vertical_i_shield.rect.x=x;
 	   vertical_i_shield.rect.y=y;
 	   vertical_i_shields.add(vertical_i_shield);
+	   CURRENT_LINE="General_yinterc";
+   }
+   
+   private void spawn_general_i_shield(float y_intercept,float rot) {
+	   PolyKaboom general_i_shield = new PolyKaboom();
+	   general_i_shield.birthtime=total_time;
+	   general_i_shield.poly= new Polygon();
+	   general_i_shield.poly.setOrigin(160, y_intercept);
+	   float[] vertices=new float[]{-500, y_intercept-2, -500, y_intercept+2, 500, y_intercept+2, 500, y_intercept-2};
+	   general_i_shield.poly.setVertices(vertices);
+	   general_i_shield.poly.setRotation(rot);
+	   general_i_shields.add(general_i_shield);
+	   System.out.println("AT LEAST THIS");
 	   CURRENT_LINE="Horizontal";
    }
    
@@ -321,15 +363,13 @@ public class GameScreen_2 implements Screen {
       camera.update();
       batch.setProjectionMatrix(camera.combined);
       
-      //--Draw everything you can without transforming the dot--
-      
       batch.begin();
       batch.draw(gridImage, grid.x, grid.y);
       for(Kaboom boom: explosions) {
           batch.draw(explosionImage, boom.rect.x-20, boom.rect.y-20);
        }
       
-      batch.draw(shipImage, ship.x, ship.y);
+      
       
       for(Rectangle mine: mines) {
          batch.draw(mineImage, mine.x-20, mine.y-20);
@@ -360,20 +400,54 @@ public class GameScreen_2 implements Screen {
       dot.x=(float)(rounded_posn_x*UNIT_LENGTH_IN_PIXELS+160);
       dot.y=(float)(rounded_posn_y*UNIT_LENGTH_IN_PIXELS+240);
       if(CURRENT_LINE=="Horizontal"){
-    	  batch.draw(i_shield_tr, -90, dot.y, 160, 0, 500f, 5f, 1f, 1f, 0f, true);
+    	  batch.draw(i_shield_tr, -90, dot.y, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
       }
       if(CURRENT_LINE=="Vertical"){
     	  batch.draw(i_shield_tr, dot.x, 0, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
+      }
+      if(CURRENT_LINE=="General_yinterc"){
+    	  batch.draw(dotImage, 160-5, dot.y-5);
+      }
+      if(CURRENT_LINE=="General_line"){
+    	  batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+    	  if(rounded_posn_x!=0){
+    		  rotdeg=Math.atan((rounded_posn_y-prev_rounded_posn_y)/(rounded_posn_x-prev_rounded_posn_x))*180/Math.PI;
+    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
+    	  }
       }
       DecimalFormat df = new DecimalFormat("#.#");
       DecimalFormat df_two = new DecimalFormat("#");
       DecimalFormat df_three = new DecimalFormat("#.##");
       
+      if(CURRENT_LINE=="Horizontal"){
+    	  font.draw(batch, "y = "+(int)rounded_posn_y, Gdx.input.getX()-30, 480-Gdx.input.getY()+40);
+      }
+      if(CURRENT_LINE=="Vertical"){
+    	  font.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+      }
+      if(CURRENT_LINE=="General_yinterc"){
+    	  if (rounded_posn_y>0){
+    		  font.draw(batch, "y = mx + "+(int)rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+    	  else if (rounded_posn_y==0){
+    		  font.draw(batch, "y = mx", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+    	  else if (rounded_posn_y<0){
+    		  font.draw(batch, "y = mx -"+(int)-rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+      }
+      if(CURRENT_LINE=="General_line"){
+    	  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+      }
+      
+      batch.draw(shipImage, ship.x, ship.y);
       //--Draw status bar and menu button--
       //(These have to be drawn last so the dot doesn't go over them.)
       
       batch.draw(statusbarImage, 0, 400);
       batch.draw(menu_button_t,265,455);
+      
+      //batch.draw(infobubble_1,Gdx.input.getX()-80-5,480-Gdx.input.getY()+5);
       
       batch.end();
       
@@ -443,6 +517,12 @@ public class GameScreen_2 implements Screen {
     	  if(total_time - other_dot.birthtime > 0.1) iterv.remove();
       }
       
+      Iterator<PolyKaboom> iterg = general_i_shields.iterator();
+      while(iterg.hasNext()) {
+    	  PolyKaboom other_dot = iterg.next();
+    	  if(total_time - other_dot.birthtime > 0.1) iterg.remove();
+      }
+      
       //--Check for overlap between mines and mine-detonators; act appropriately if found--
       
       shieldImage=shieldImage_unhit;
@@ -492,6 +572,18 @@ public class GameScreen_2 implements Screen {
 		            score+=1;
 		          }
 		     }
+		     
+		     Iterator<PolyKaboom> itergs = general_i_shields.iterator();
+		     while(itergs.hasNext()) {
+		    	 PolyKaboom other_dot = itergs.next();
+		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet) {
+		         	System.out.println("HAVE MERCY");
+		    		 spawnExplosion(mine.x,mine.y);
+		         	iter.remove();
+		         	deadyet=true;
+		            score+=1;
+		          }
+		     }
 		  }
       }      
       //--Let the player pause/unpause--
@@ -515,6 +607,17 @@ public class GameScreen_2 implements Screen {
     				  }
     				  else if (CURRENT_LINE=="Vertical"){
     					  spawn_vertical_i_shield(dot.x, 0);
+    				  }
+    				  else if (CURRENT_LINE=="General_yinterc"){
+    					  prev_rounded_posn_x=0;
+    					  prev_rounded_posn_y=rounded_posn_y;
+    					  actual_dot.x=160;
+    					  actual_dot.y=dot.y;
+    					  CURRENT_LINE="General_line";
+    				  }
+    				  else if (CURRENT_LINE=="General_line"){
+    					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
+    					  
     				  }
     				  charges-=1;
     			  }
