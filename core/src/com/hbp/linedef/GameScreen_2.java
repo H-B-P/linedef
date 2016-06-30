@@ -356,7 +356,6 @@ public class GameScreen_2 implements Screen {
 	   circle_i_shield.birthtime=total_time;
 	   circle_i_shield.circ= new Circle(x_centre, y_centre, radius);
 	   circle_i_shields.add(circle_i_shield);
-	   System.out.println("AT LEAST");
    }
    
    private void spawnExplosion(float X, float Y){
@@ -416,13 +415,13 @@ public class GameScreen_2 implements Screen {
       }
       
       
-      for(Kaboom horizontal_i_shield: horizontal_i_shields) {
-    	  batch.draw(i_shield_t, horizontal_i_shield.rect.x, horizontal_i_shield.rect.y);
-       }
-      for(Kaboom vertical_i_shield: vertical_i_shields) {
-    	  //batch.draw(i_shield_t, vertical_i_shield.rect.x, vertical_i_shield.rect.y);
-    	  batch.draw(i_shield_tr, vertical_i_shield.rect.x, vertical_i_shield.rect.y, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
-       }
+//      for(Kaboom horizontal_i_shield: horizontal_i_shields) {
+//    	  batch.draw(i_shield_t, horizontal_i_shield.rect.x, horizontal_i_shield.rect.y);
+//       }
+//      for(Kaboom vertical_i_shield: vertical_i_shields) {
+//    	  //batch.draw(i_shield_t, vertical_i_shield.rect.x, vertical_i_shield.rect.y);
+//    	  batch.draw(i_shield_tr, vertical_i_shield.rect.x, vertical_i_shield.rect.y, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
+//       }
 
       for(Rectangle shield: shields) {
           batch.draw(shieldImage, shield.x, shield.y-3);
@@ -450,19 +449,19 @@ public class GameScreen_2 implements Screen {
       }
       
       if(CURRENT_LINE=="Horizontal"){
-    	  batch.draw(i_shield_tr, -90, dot.y, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
+    	  batch.draw(i_shield_tr, -90, dot.y-3, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
       }
       if(CURRENT_LINE=="Vertical"){
-    	  batch.draw(i_shield_tr, dot.x, 0, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
+    	  batch.draw(i_shield_tr, dot.x+3, 0, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
       }
       if(CURRENT_LINE=="General_yinterc"){
-    	  batch.draw(dotImage, 160-5, dot.y-5);
+    	  batch.draw(dotImage, 160-6, dot.y-6);
       }
       if(CURRENT_LINE=="General_line"){
-    	  batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
     	  if(rounded_posn_x!=0){
     		  rotdeg=Math.atan((rounded_posn_y-prev_rounded_posn_y)/(rounded_posn_x-prev_rounded_posn_x))*180/Math.PI;
-    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
+    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y-3, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
     	  }
       }
       if(CURRENT_LINE=="Circle_centre"){
@@ -470,7 +469,7 @@ public class GameScreen_2 implements Screen {
       }
      
       if(CURRENT_LINE=="Circle_line"){
-    	  batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
     	  
     	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
     	  if (radius<7 && radius>0){
@@ -734,7 +733,7 @@ public class GameScreen_2 implements Screen {
     			  IS_TIME_HAPPENING=!IS_TIME_HAPPENING;
     		  }
     		  else{
-    			  if( charges>0){
+    			  if( charges>0 && IS_TIME_HAPPENING){
     				  if (CURRENT_LINE=="Horizontal"){
     					  spawn_horizontal_i_shield(0, dot.y);
     				  }
