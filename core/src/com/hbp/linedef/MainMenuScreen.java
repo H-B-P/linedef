@@ -51,11 +51,6 @@ public class MainMenuScreen implements Screen {
 	private int score_three;
 	private int score_four;
 	
-	private int cost_one;
-	private int cost_two;
-	private int cost_three;
-	private int cost_four;
-	
 	private BitmapFont font;
 	
 	private int MINESPEED;
@@ -236,11 +231,11 @@ public class MainMenuScreen implements Screen {
 				
 				if (GENRE=="LINE"){
 					if (one_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", "auto"));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 1));
 			            dispose();
 					}
 					if (two_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", "nonauto"));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 2));
 			            dispose();
 					}
 	

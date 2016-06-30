@@ -115,7 +115,7 @@ public class GameScreen_2 implements Screen {
    private double UNIT_LENGTH_IN_PIXELS;
    private String CURRENT_LINE;
    
-   public String MODE;
+   private int LEVEL;
    public String GENRE;
    private int MINESPEED;
    
@@ -125,19 +125,19 @@ public class GameScreen_2 implements Screen {
    
  //---Do all the initial stuff that happens on rendering---
    
-   public GameScreen_2(final LineDef gam, int minespeed, String genre, String mode) {
+   public GameScreen_2(final LineDef gam, int minespeed, String genre, int level) {
 	  
 	   //--Perform tautological actions--
 	   this.game = gam;
       
-      MODE=mode;
+      LEVEL=level;
       GENRE=genre;
       MINESPEED=minespeed;
       
       //--Set up highscores--
       
       prefs = Gdx.app.getPreferences("galen_preferences");
-      prefs_score=prefs.getInteger("score_"+GENRE+"_"+MODE);
+      prefs_score=prefs.getInteger("score_"+GENRE+"_"+LEVEL);
 	  
 	  //--Load images--
       mineImage = new Texture(Gdx.files.internal("a_mine_2.png"));
@@ -237,9 +237,15 @@ public class GameScreen_2 implements Screen {
       UNIT_LENGTH_IN_PIXELS=40;
       
       CURRENT_LINE="Horizontal";
-      
-      line_list=new String[]{"Vertical","Horizontal"};
-      line_cycle=new String[]{"Horizontal","Vertical","General_yinterc","OriC_centre","Circle_centre"};
+      if (LEVEL==1){
+    	  line_list=new String[]{"Vertical", "Horizontal"};
+    	  line_cycle=new String[]{"Horizontal", "Vertical", "OriC_centre"};
+    	  CURRENT_LINE="Horizontal";
+      }
+      if (LEVEL==2){
+	      line_list=new String[]{"Circle_centre","Circle_centre"};
+	      line_cycle=new String[]{"Circle_centre","Circle_centre","Circle_centre"};
+      }
       line_cycle_posn=2;
       
       circles_t=new Texture[8];
@@ -382,13 +388,52 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave(){
+	   if (LEVEL==1){
+		   wave_l1();
+	   }
+	   if (LEVEL==2){
+		   wave_l2();
+	   }
+   }
+   
+   private void wave_l1(){
+	  if (seconds%12==0 && seconds<200){
+		  spawnRandomMine_r();
+	  }
+	  if (seconds%12==1 && seconds<200){
+		  spawnRandomMine_l();
+	  }
+	  if (seconds%12==2 && seconds<200){
+		  spawnRandomMine_r();
+	  }
+	  if (seconds%12==4 && seconds<200){
+		  spawnRandomMine_l();
+	  }
+	  if (seconds%12==6 && seconds<200){
+		  spawnMine_II(0);
+	  }
+	  if (seconds%12==8 && seconds<200){
+		  spawnRandomMine();
+	  }
+	  if (seconds%12==10 && seconds<200){
+		  spawnRandomMine_l();
+		  spawnRandomMine_r();
+	  }
+   }
+   
+   private void wave_l2(){
+	  if (seconds%7==0 && seconds<200){
+		  spawnMine_II(0);
+	  }
+	  else{
 		  if (seconds%2==0 && seconds<200){
 			  spawnRandomMine_r();
 		  }
 		  if (seconds%2==1 && seconds<200){
 			  spawnRandomMine_l();
 		  }
-	   }
+	  }
+   }
    
    private void cycle_the_lists(){
 	   line_cycle_posn=(line_cycle_posn+1)%line_cycle.length; //ADD 1 BACK IN ONCE LINE THING FIXED
@@ -683,7 +728,7 @@ public class GameScreen_2 implements Screen {
     		  if(score>prefs_score){
     			  
     	    	  
-    	    	  prefs.putInteger("score_"+GENRE+"_"+MODE, score);
+    	    	  prefs.putInteger("score_"+GENRE+"_"+LEVEL, score);
     	    	  prefs.flush();
     		  }
     		  game.setScreen(new MainMenuScreen(game, GENRE, MINESPEED));
@@ -847,7 +892,7 @@ public class GameScreen_2 implements Screen {
     					  score-=1;
     					  cycle_the_lists();
     				  }
-    				  charges-=1;
+    				  //charges-=1;
     				  
     			  }
     		  }
