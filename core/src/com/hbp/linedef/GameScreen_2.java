@@ -50,23 +50,25 @@ public class GameScreen_2 implements Screen {
    private TextureRegion i_shield_tr;
    
    private Texture infobubble_1;
+   private Texture[] circles_t;
    
    private SpriteBatch batch;
    private OrthographicCamera camera;
    
-   
+   private int radius;
+   private double xd;
+   private double yd;
    private Rectangle dot;
    private Rectangle actual_dot;
    
    private Rectangle ship;
-   private Circle inner_circle;
-   private Circle outer_circle;
    
    private Array<Rectangle> mines;
    private Array<Kaboom> explosions;
    private Array<Kaboom> horizontal_i_shields;
    private Array<Kaboom> vertical_i_shields;
    private Array<PolyKaboom> general_i_shields;
+   private Array<CircleKaboom> circle_i_shields;
    
    private Rectangle grid;
    private Array<Rectangle> shields;
@@ -202,6 +204,7 @@ public class GameScreen_2 implements Screen {
       horizontal_i_shields = new Array<Kaboom>();
       vertical_i_shields = new Array<Kaboom>();
       general_i_shields = new Array<PolyKaboom>();
+      circle_i_shields = new Array<CircleKaboom>();
       
       //--Set up basics--
       spawnShield(1);
@@ -221,6 +224,14 @@ public class GameScreen_2 implements Screen {
       UNIT_LENGTH_IN_PIXELS=40;
       
       CURRENT_LINE="Horizontal";
+      
+      circles_t=new Texture[8];
+      
+      for(int i=0; i<7; i++){
+			if (Gdx.files.internal("circle_r_"+i+".png").exists()){
+				circles_t[i]=new Texture(Gdx.files.internal("circle_r_"+i+".png"));
+			}
+      }
    }
    
    //---Set up functions to be called during Render---
@@ -236,11 +247,33 @@ public class GameScreen_2 implements Screen {
 	   return coin*2-1;
    }
    
+   //--Collisions between geometric shapes. Why is this not used in libgdx?
+   
    private boolean Rectangle_collides_with_Polygon(Rectangle rec, Polygon pol) {
 	   float[] rp_input=new float[]{rec.x, rec.y, rec.x+rec.width, rec.y, rec.x+rec.width, rec.y+rec.height, rec.x, rec.y+rec.height};
 	   Polygon recpol=new Polygon(rp_input);
 	   return Intersector.overlapConvexPolygons(pol, recpol);
-	}
+   }
+   
+   private boolean Circle_contains_Rectangle(Circle cir, Rectangle rec) {
+	   float[] verts= new float[]{rec.x, rec.y, rec.x+rec.width, rec.y, rec.x+rec.width, rec.y+rec.height, rec.x, rec.y+rec.height};
+	   if (cir.contains(verts[0], verts[1]) && cir.contains(verts[2], verts[3]) && cir.contains(verts[4], verts[5]) && cir.contains(verts[6], verts[7])){
+		   return true;
+	   }
+	   else{
+		   return false;
+		   
+	   }
+   }
+   
+   private boolean Circle_intersects_Rectangle(Circle cir, Rectangle rec){
+	   if (Intersector.overlaps(cir, rec) && !Circle_contains_Rectangle(cir, rec)){
+		   return true;
+	   }
+	   else{
+		   return false;
+	   }
+   }
   
    //--Game functions--
    
@@ -315,8 +348,15 @@ public class GameScreen_2 implements Screen {
 	   general_i_shield.poly.setVertices(vertices);
 	   general_i_shield.poly.setRotation(rot);
 	   general_i_shields.add(general_i_shield);
-	   System.out.println("AT LEAST THIS");
-	   CURRENT_LINE="Horizontal";
+	   CURRENT_LINE="OriC_centre";
+   }
+   
+   private void spawn_circle_i_shield(float x_centre, float y_centre, float radius) {
+	   CircleKaboom circle_i_shield = new CircleKaboom();
+	   circle_i_shield.birthtime=total_time;
+	   circle_i_shield.circ= new Circle(x_centre, y_centre, radius);
+	   circle_i_shields.add(circle_i_shield);
+	   System.out.println("AT LEAST");
    }
    
    private void spawnExplosion(float X, float Y){
@@ -394,11 +434,21 @@ public class GameScreen_2 implements Screen {
     	  posn_y=-(Gdx.input.getY()-240)/UNIT_LENGTH_IN_PIXELS;
     	  rounded_posn_x=Math.round((float)posn_x);
     	  rounded_posn_y=Math.round((float)posn_y);
-    	  
+    	  xd=posn_x-prev_rounded_posn_x;
+    	  yd=posn_y-prev_rounded_posn_y;
       }
       
       dot.x=(float)(rounded_posn_x*UNIT_LENGTH_IN_PIXELS+160);
       dot.y=(float)(rounded_posn_y*UNIT_LENGTH_IN_PIXELS+240);
+      
+      if(CURRENT_LINE=="OriC_centre"){
+    	  prev_rounded_posn_x=0;
+    	  prev_rounded_posn_y=0;
+    	  actual_dot.x=160;
+    	  actual_dot.y=240;
+    	  CURRENT_LINE="Circle_line";    			  
+      }
+      
       if(CURRENT_LINE=="Horizontal"){
     	  batch.draw(i_shield_tr, -90, dot.y, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
       }
@@ -415,6 +465,19 @@ public class GameScreen_2 implements Screen {
     		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
     	  }
       }
+      if(CURRENT_LINE=="Circle_centre"){
+    	  batch.draw(dotImage, dot.x-5, dot.y-5);
+      }
+     
+      if(CURRENT_LINE=="Circle_line"){
+    	  batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+    	  
+    	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
+    	  if (radius<7 && radius>0){
+    		  batch.draw(circles_t[radius], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS));
+    	  }
+      }
+      
       DecimalFormat df = new DecimalFormat("#.#");
       DecimalFormat df_two = new DecimalFormat("#");
       DecimalFormat df_three = new DecimalFormat("#.##");
@@ -437,9 +500,63 @@ public class GameScreen_2 implements Screen {
     	  }
       }
       if(CURRENT_LINE=="General_line"){
-    	  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  if (rounded_posn_y>0){
+    		  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+    	  else if (rounded_posn_y==0){
+    		  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+    	  else if (rounded_posn_y<0){
+    		  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  }
+    	  
       }
-      
+      if(CURRENT_LINE=="Circle_centre"){
+    	  String xpart="";
+    	  String ypart="";
+    	  if (rounded_posn_x>0){
+    		  xpart="(x-"+(int)rounded_posn_x+")^2";
+    	  }
+    	  else if(rounded_posn_x==0){
+    		  xpart="x^2";
+    	  }
+    	  if (rounded_posn_x<0){
+    		  xpart="(x+"+(int)-rounded_posn_x+")^2";
+    	  }
+    	  if (prev_rounded_posn_y>0){
+    		  ypart="(y-"+(int)rounded_posn_y+")^2";
+    	  }
+    	  else if(rounded_posn_y==0){
+    		  ypart="y^2";
+    	  }
+    	  if (rounded_posn_y<0){
+    		  ypart="(y+"+(int)-rounded_posn_y+")^2";
+    	  }
+    	  font.draw(batch, xpart + " + " + ypart + " = r^2", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+      }
+      if(CURRENT_LINE=="Circle_line"){
+    	  String xpart="";
+    	  String ypart="";
+    	  if (prev_rounded_posn_x>0){
+    		  xpart="(x-"+(int)prev_rounded_posn_x+")^2";
+    	  }
+    	  else if(prev_rounded_posn_x==0){
+    		  xpart="x^2";
+    	  }
+    	  if (prev_rounded_posn_x<0){
+    		  xpart="(x+"+(int)-prev_rounded_posn_x+")^2";
+    	  }
+    	  if (prev_rounded_posn_y>0){
+    		  ypart="(y-"+(int)prev_rounded_posn_x+")^2";
+    	  }
+    	  else if(prev_rounded_posn_y==0){
+    		  ypart="y^2";
+    	  }
+    	  if (prev_rounded_posn_y<0){
+    		  ypart="(y+"+(int)-prev_rounded_posn_x+")^2";
+    	  }
+    	  font.draw(batch, xpart + " + " + ypart + " = "+ radius*radius, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+      }
       batch.draw(shipImage, ship.x, ship.y);
       //--Draw status bar and menu button--
       //(These have to be drawn last so the dot doesn't go over them.)
@@ -523,6 +640,12 @@ public class GameScreen_2 implements Screen {
     	  if(total_time - other_dot.birthtime > 0.1) iterg.remove();
       }
       
+      Iterator<CircleKaboom> iterc = circle_i_shields.iterator();
+      while(iterc.hasNext()) {
+    	  CircleKaboom other_dot = iterc.next();
+    	  if(total_time - other_dot.birthtime > 0.1) iterc.remove();
+      }
+      
       //--Check for overlap between mines and mine-detonators; act appropriately if found--
       
       shieldImage=shieldImage_unhit;
@@ -577,7 +700,17 @@ public class GameScreen_2 implements Screen {
 		     while(itergs.hasNext()) {
 		    	 PolyKaboom other_dot = itergs.next();
 		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet) {
-		         	System.out.println("HAVE MERCY");
+		    		 spawnExplosion(mine.x,mine.y);
+		         	iter.remove();
+		         	deadyet=true;
+		            score+=1;
+		          }
+		     }
+		     
+		     Iterator<CircleKaboom> itercs = circle_i_shields.iterator();
+		     while(itercs.hasNext()) {
+		    	 CircleKaboom other_dot = itercs.next();
+		    	 if(Circle_intersects_Rectangle(other_dot.circ, mine) && !deadyet) {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -619,7 +752,20 @@ public class GameScreen_2 implements Screen {
     					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
     					  
     				  }
-    				  charges-=1;
+    				  else if (CURRENT_LINE=="Circle_centre"){
+    					  prev_rounded_posn_x=rounded_posn_x;
+    					  prev_rounded_posn_y=rounded_posn_y;
+    					  actual_dot.x=dot.x;
+    					  actual_dot.y=dot.y;
+    					  CURRENT_LINE="Circle_line";
+    				  }
+    				  else if (CURRENT_LINE=="Circle_line"){
+    					  if (radius<7 && radius>0){
+    					  spawn_circle_i_shield(actual_dot.x, actual_dot.y, (float)(radius*UNIT_LENGTH_IN_PIXELS));
+    					  }
+    					  CURRENT_LINE="Horizontal";
+    				  }
+    				  //charges-=1;
     			  }
     		  }
     	  }
