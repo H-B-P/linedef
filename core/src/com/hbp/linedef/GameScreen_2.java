@@ -166,7 +166,7 @@ public class GameScreen_2 implements Screen {
       menu_button_t=new Texture(Gdx.files.internal("button_menu_smol.png"));
       
       //--Set zeroes to zero--
-      score=MINESPEED/5;
+      score=0;
       
       posn_x=0;
       posn_y=0;
@@ -563,6 +563,10 @@ public class GameScreen_2 implements Screen {
       batch.draw(statusbarImage, 0, 400);
       batch.draw(menu_button_t,265,455);
       
+      score=Math.max(score,0);
+      font.draw(batch, "Score:", 200, 450);
+      font.draw(batch, df.format(score), 250, 450);
+      
       //batch.draw(infobubble_1,Gdx.input.getX()-80-5,480-Gdx.input.getY()+5);
       
       batch.end();
@@ -624,25 +628,25 @@ public class GameScreen_2 implements Screen {
       Iterator<Kaboom> iterh = horizontal_i_shields.iterator();
       while(iterh.hasNext()) {
     	  Kaboom other_dot = iterh.next();
-    	  if(total_time - other_dot.birthtime > 0.1) iterh.remove();
+    	  if(total_time - other_dot.birthtime > 0.05) iterh.remove();
       }
       
       Iterator<Kaboom> iterv = vertical_i_shields.iterator();
       while(iterv.hasNext()) {
     	  Kaboom other_dot = iterv.next();
-    	  if(total_time - other_dot.birthtime > 0.1) iterv.remove();
+    	  if(total_time - other_dot.birthtime > 0.05) iterv.remove();
       }
       
       Iterator<PolyKaboom> iterg = general_i_shields.iterator();
       while(iterg.hasNext()) {
     	  PolyKaboom other_dot = iterg.next();
-    	  if(total_time - other_dot.birthtime > 0.1) iterg.remove();
+    	  if(total_time - other_dot.birthtime > 0.05) iterg.remove();
       }
       
       Iterator<CircleKaboom> iterc = circle_i_shields.iterator();
       while(iterc.hasNext()) {
     	  CircleKaboom other_dot = iterc.next();
-    	  if(total_time - other_dot.birthtime > 0.1) iterc.remove();
+    	  if(total_time - other_dot.birthtime > 0.05) iterc.remove();
       }
       
       //--Check for overlap between mines and mine-detonators; act appropriately if found--
@@ -669,7 +673,7 @@ public class GameScreen_2 implements Screen {
 		         	iter.remove();
 		         	deadyet=true;
 		         	shieldImage=shieldImage_flicker;
-		             
+		            score-=5;
 		          }
 		     }
 		     
@@ -680,7 +684,7 @@ public class GameScreen_2 implements Screen {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=1;
+		            score+=2;
 		          }
 		     }
 		     
@@ -691,7 +695,7 @@ public class GameScreen_2 implements Screen {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=1;
+		            score+=2;
 		          }
 		     }
 		     
@@ -702,7 +706,7 @@ public class GameScreen_2 implements Screen {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=1;
+		            score+=2;
 		          }
 		     }
 		     
@@ -713,7 +717,7 @@ public class GameScreen_2 implements Screen {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=1;
+		            score+=2;
 		          }
 		     }
 		  }
@@ -736,9 +740,11 @@ public class GameScreen_2 implements Screen {
     			  if( charges>0 && IS_TIME_HAPPENING){
     				  if (CURRENT_LINE=="Horizontal"){
     					  spawn_horizontal_i_shield(0, dot.y);
+    					  score-=1;
     				  }
     				  else if (CURRENT_LINE=="Vertical"){
     					  spawn_vertical_i_shield(dot.x, 0);
+    					  score-=1;
     				  }
     				  else if (CURRENT_LINE=="General_yinterc"){
     					  prev_rounded_posn_x=0;
@@ -749,7 +755,7 @@ public class GameScreen_2 implements Screen {
     				  }
     				  else if (CURRENT_LINE=="General_line"){
     					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
-    					  
+    					  score-=1;
     				  }
     				  else if (CURRENT_LINE=="Circle_centre"){
     					  prev_rounded_posn_x=rounded_posn_x;
@@ -763,8 +769,10 @@ public class GameScreen_2 implements Screen {
     					  spawn_circle_i_shield(actual_dot.x, actual_dot.y, (float)(radius*UNIT_LENGTH_IN_PIXELS));
     					  }
     					  CURRENT_LINE="Horizontal";
+    					  score-=1;
     				  }
-    				  //charges-=1;
+    				  charges-=1;
+    				  
     			  }
     		  }
     	  }
