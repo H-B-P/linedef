@@ -91,6 +91,7 @@ public class GameScreen_2 implements Screen {
    private int prefs_score;
    
    private BitmapFont font;
+   private BitmapFont scorefont;
    private BitmapFont dotfunction_font;
    
    private Preferences prefs;
@@ -212,6 +213,8 @@ public class GameScreen_2 implements Screen {
       //spawnShield(3);
       font = new BitmapFont();
       font.setColor(Color.CYAN);
+      scorefont = new BitmapFont();
+      scorefont.setColor(Color.BLACK);
       dotfunction_font = new BitmapFont();
       dotfunction_font.setColor(Color.BLACK);
       maxcharges=6;
@@ -472,6 +475,7 @@ public class GameScreen_2 implements Screen {
     	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
     	  
     	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
+    	  radius=(int)Math.max(radius, 1);
     	  if (radius<7 && radius>0){
     		  batch.draw(circles_t[radius], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS));
     	  }
@@ -564,8 +568,8 @@ public class GameScreen_2 implements Screen {
       batch.draw(menu_button_t,265,455);
       
       score=Math.max(score,0);
-      font.draw(batch, "Score:", 200, 450);
-      font.draw(batch, df.format(score), 250, 450);
+      scorefont.draw(batch, "Score:", 230, 440);
+      scorefont.draw(batch, df.format(score), 280, 440);
       
       //batch.draw(infobubble_1,Gdx.input.getX()-80-5,480-Gdx.input.getY()+5);
       
