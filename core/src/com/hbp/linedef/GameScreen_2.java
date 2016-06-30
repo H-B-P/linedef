@@ -50,6 +50,9 @@ public class GameScreen_2 implements Screen {
    private TextureRegion i_shield_tr;
    
    private Texture infobubble_1;
+   private Texture ib_back;
+   private Texture ib_back_smol;
+   private Texture ib_back_large;
    private Texture[] circles_t;
    
    private SpriteBatch batch;
@@ -150,6 +153,9 @@ public class GameScreen_2 implements Screen {
       i_shield_tr=new TextureRegion(i_shield_t);
       
       infobubble_1=new Texture(Gdx.files.internal("infobubble_1.png"));
+      ib_back=new Texture(Gdx.files.internal("line_f_background.png"));
+      ib_back_smol=new Texture(Gdx.files.internal("line_f_background_smol.png"));
+      ib_back_large=new Texture(Gdx.files.internal("line_f_background_large.png"));
       
       shipImages[0] = new Texture(Gdx.files.internal("Head.png"));
       shipImages[1] = new Texture(Gdx.files.internal("Head_1_1.png"));
@@ -212,7 +218,7 @@ public class GameScreen_2 implements Screen {
       //spawnShield(2);
       //spawnShield(3);
       font = new BitmapFont();
-      font.setColor(Color.CYAN);
+      font.setColor(Color.RED);
       scorefont = new BitmapFont();
       scorefont.setColor(Color.BLACK);
       dotfunction_font = new BitmapFont();
@@ -468,7 +474,7 @@ public class GameScreen_2 implements Screen {
     	  }
       }
       if(CURRENT_LINE=="Circle_centre"){
-    	  batch.draw(dotImage, dot.x-5, dot.y-5);
+    	  batch.draw(dotImage, dot.x-6, dot.y-6);
       }
      
       if(CURRENT_LINE=="Circle_line"){
@@ -486,12 +492,15 @@ public class GameScreen_2 implements Screen {
       DecimalFormat df_three = new DecimalFormat("#.##");
       
       if(CURRENT_LINE=="Horizontal"){
+    	  batch.draw(ib_back_smol, Gdx.input.getX()-30-3, 480-Gdx.input.getY()+40-17);
     	  font.draw(batch, "y = "+(int)rounded_posn_y, Gdx.input.getX()-30, 480-Gdx.input.getY()+40);
       }
       if(CURRENT_LINE=="Vertical"){
+    	  batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  font.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
       }
       if(CURRENT_LINE=="General_yinterc"){
+    	  batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  if (rounded_posn_y>0){
     		  font.draw(batch, "y = mx + "+(int)rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
     	  }
@@ -503,6 +512,7 @@ public class GameScreen_2 implements Screen {
     	  }
       }
       if(CURRENT_LINE=="General_line"){
+    	  batch.draw(ib_back, Gdx.input.getX()-50-5, 480-Gdx.input.getY()+10-17);
     	  if (rounded_posn_y>0){
     		  font.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
     	  }
@@ -535,6 +545,7 @@ public class GameScreen_2 implements Screen {
     	  if (rounded_posn_y<0){
     		  ypart="(y+"+(int)-rounded_posn_y+")^2";
     	  }
+    	  batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  font.draw(batch, xpart + " + " + ypart + " = r^2", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
       }
       if(CURRENT_LINE=="Circle_line"){
@@ -543,7 +554,7 @@ public class GameScreen_2 implements Screen {
     	  if (prev_rounded_posn_x>0){
     		  xpart="(x-"+(int)prev_rounded_posn_x+")^2";
     	  }
-    	  else if(prev_rounded_posn_x==0){
+    	  if(prev_rounded_posn_x==0){
     		  xpart="x^2";
     	  }
     	  if (prev_rounded_posn_x<0){
@@ -552,11 +563,17 @@ public class GameScreen_2 implements Screen {
     	  if (prev_rounded_posn_y>0){
     		  ypart="(y-"+(int)prev_rounded_posn_x+")^2";
     	  }
-    	  else if(prev_rounded_posn_y==0){
+    	  if(prev_rounded_posn_y==0){
     		  ypart="y^2";
     	  }
     	  if (prev_rounded_posn_y<0){
     		  ypart="(y+"+(int)-prev_rounded_posn_x+")^2";
+    	  }
+    	  if(prev_rounded_posn_y==0 && prev_rounded_posn_x==0){
+    		  batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
+    	  }
+    	  else{
+    		  batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  }
     	  font.draw(batch, xpart + " + " + ypart + " = "+ radius*radius, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
       }
@@ -566,6 +583,11 @@ public class GameScreen_2 implements Screen {
       
       batch.draw(statusbarImage, 0, 400);
       batch.draw(menu_button_t,265,455);
+      
+	  batch.draw(ib_back, 20, 480-25);
+	  batch.draw(ib_back, 20, 480-50);
+	  batch.draw(ib_back, 20, 480-75);
+
       
       score=Math.max(score,0);
       scorefont.draw(batch, "Score:", 230, 440);
