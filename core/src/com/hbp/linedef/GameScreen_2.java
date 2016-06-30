@@ -381,18 +381,13 @@ public class GameScreen_2 implements Screen {
 	   explosions.add(boom);
    }
    
-   private void wave_without_pause(int ss){
-		  int ts=ss+5;
-		   if (seconds>=ts && seconds<ts+20){
-	 		  if((seconds-ts)%2 == 0) spawnRandomMine();
-	 	   }
-		   if (seconds>=ts+20 && seconds<ts+40){
-			   if((seconds-ts)%4 == 0) spawnRandomMine();
-		 	   if((seconds-ts)%4 == 2){
-		 			spawnRandomMine_r();
-					spawnRandomMine_l();
-		 	   } 
-		   }
+   private void wave(){
+		  if (seconds%2==0 && seconds<200){
+			  spawnRandomMine_r();
+		  }
+		  if (seconds%2==1 && seconds<200){
+			  spawnRandomMine_l();
+		  }
 	   }
    
    private void cycle_the_lists(){
@@ -400,9 +395,6 @@ public class GameScreen_2 implements Screen {
 	   CURRENT_LINE=line_list[0];
 	   line_list[0]=line_list[1];
 	   line_list[1]=line_cycle[line_cycle_posn];
-	   //System.out.println(CURRENT_LINE);
-	   //System.out.println(line_cycle_posn);
-	   System.out.println(line_list[0]);
    }
    
    //---RENDER---
@@ -684,13 +676,8 @@ public class GameScreen_2 implements Screen {
     	  //Events!
     	  
     	  
-    	  if (true){
-	    	  wave_without_pause(0);
-	    	  wave_without_pause(50);
-	    	  wave_without_pause(100);
-	    	  wave_without_pause(150);
-    	  }
-    	  if (seconds==203){
+    	  wave();
+    	  if (seconds==210){
     		  
     		  
     		  if(score>prefs_score){
