@@ -195,7 +195,7 @@ public class GameScreen_2 implements Screen {
       seconds=0;
       wastouched=false;
       
-      picked=0;
+      
       
       //(Whether the game is not-exactly-paused.)
       IS_TIME_HAPPENING=true;
@@ -244,14 +244,16 @@ public class GameScreen_2 implements Screen {
       UNIT_LENGTH_IN_PIXELS=40;
       
       CURRENT_LINE="";
+      picked=1;
       if (LEVEL==1){
-    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
-    	  line_cycle=new String[]{"Horizontal", "General_yinterc", "Circle_centre"};
+	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
+	      line_cycle=new String[]{"Horizontal", "Vertical", "OriI_yinterc"};
       }
       if (LEVEL==2){
-	      line_list=new String[]{"Circle_centre","Circle_centre"};
-	      line_cycle=new String[]{"Circle_centre","Circle_centre","Circle_centre"};
+    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+    	  line_cycle=new String[]{"Horizontal", "Horizontal", "Vertical","Vertical","Vertical", "OriC_centre"};
       }
+      
       
       circles_t=new Texture[8];
       
@@ -561,6 +563,15 @@ public class GameScreen_2 implements Screen {
     	  actual_dot.y=240;
     	  CURRENT_LINE="Circle_line";    			  
       }
+      
+      if(CURRENT_LINE=="OriI_yinterc"){
+    	  prev_rounded_posn_x=0;
+    	  prev_rounded_posn_y=0;
+    	  actual_dot.x=160;
+    	  actual_dot.y=240;
+    	  CURRENT_LINE="General_line";    			  
+      }
+      
       if (charges>2){
 	      if(CURRENT_LINE=="Horizontal"){
 	    	  batch.draw(i_shield_tr, -90, dot.y-3, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
@@ -620,6 +631,9 @@ public class GameScreen_2 implements Screen {
     	      }
     	      if (line_list[i]=="Vertical"){
     	    	  font.draw(batch, "x = a", 20+3, 480-25-25*i+17);
+    	      }
+    	      if (line_list[i]=="OriI_yinterc"){
+    	    	  font.draw(batch, "y = mx", 20+3, 480-25-25*i+17);
     	      }
     	      if (line_list[i]=="General_yinterc"){
     	    	  font.draw(batch, "y = mx + c", 20+3, 480-25-25*i+17);
@@ -714,13 +728,13 @@ public class GameScreen_2 implements Screen {
     		  xpart="(x+"+(int)-prev_rounded_posn_x+")^2";
     	  }
     	  if (prev_rounded_posn_y>0){
-    		  ypart="(y-"+(int)prev_rounded_posn_x+")^2";
+    		  ypart="(y-"+(int)prev_rounded_posn_y+")^2";
     	  }
     	  if(prev_rounded_posn_y==0){
     		  ypart="y^2";
     	  }
     	  if (prev_rounded_posn_y<0){
-    		  ypart="(y+"+(int)-prev_rounded_posn_x+")^2";
+    		  ypart="(y+"+(int)-prev_rounded_posn_y+")^2";
     	  }
     	  if(prev_rounded_posn_y==0 && prev_rounded_posn_x==0){
     		  //batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
