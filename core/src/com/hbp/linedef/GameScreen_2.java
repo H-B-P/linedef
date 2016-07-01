@@ -55,6 +55,8 @@ public class GameScreen_2 implements Screen {
    private Texture ib_back_large;
    private Texture[] circles_t;
    
+   private Rectangle[] picks;
+   
    private SpriteBatch batch;
    private OrthographicCamera camera;
    
@@ -121,7 +123,9 @@ public class GameScreen_2 implements Screen {
    
    private String[] line_list;
    private String[] line_cycle;
-   private int line_cycle_posn;
+   //private int line_cycle_posn;
+   
+   private int picked;
    
  //---Do all the initial stuff that happens on rendering---
    
@@ -190,6 +194,9 @@ public class GameScreen_2 implements Screen {
       total_time=0;
       seconds=0;
       wastouched=false;
+      
+      picked=0;
+      
       //(Whether the game is not-exactly-paused.)
       IS_TIME_HAPPENING=true;
       
@@ -227,7 +234,7 @@ public class GameScreen_2 implements Screen {
       scorefont.setColor(Color.BLACK);
       greenfont = new BitmapFont();
       greenfont.setColor(Color.GREEN);
-      maxcharges=6;
+      maxcharges=9;
       
       //--Batch, Camera, Action--
       camera = new OrthographicCamera();
@@ -236,17 +243,15 @@ public class GameScreen_2 implements Screen {
       
       UNIT_LENGTH_IN_PIXELS=40;
       
-      CURRENT_LINE="Horizontal";
+      CURRENT_LINE="";
       if (LEVEL==1){
-    	  line_list=new String[]{"Vertical", "Horizontal"};
-    	  line_cycle=new String[]{"Horizontal", "Vertical", "OriC_centre"};
-    	  CURRENT_LINE="Horizontal";
+    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+    	  line_cycle=new String[]{"Horizontal", "General_yinterc", "Circle_centre"};
       }
       if (LEVEL==2){
 	      line_list=new String[]{"Circle_centre","Circle_centre"};
 	      line_cycle=new String[]{"Circle_centre","Circle_centre","Circle_centre"};
       }
-      line_cycle_posn=2;
       
       circles_t=new Texture[8];
       
@@ -255,6 +260,22 @@ public class GameScreen_2 implements Screen {
 				circles_t[i]=new Texture(Gdx.files.internal("circle_r_"+i+".png"));
 			}
       }
+      
+      picks=new Rectangle[]{new Rectangle(), new Rectangle(), new Rectangle()};
+      
+      picks[0].x=20;
+	  picks[0].y=480-25;
+	  picks[1].x=20;
+	  picks[1].y=480-50;
+	  picks[2].x=20;
+	  picks[2].y=480-75;
+	  
+	  picks[0].height=20;
+	  picks[0].width=140;
+	  picks[1].height=20;
+	  picks[1].width=140;
+	  picks[2].height=20;
+	  picks[2].width=140;
    }
    
    //---Set up functions to be called during Render---
@@ -270,7 +291,7 @@ public class GameScreen_2 implements Screen {
 	   return coin*2-1;
    }
    
-   //--Collisions between geometric shapes. Why is this not used in libgdx?
+   //--Collisions between geometric shapes. Why is this not already part of libgdx?
    
    private boolean Rectangle_collides_with_Polygon(Rectangle rec, Polygon pol) {
 	   float[] rp_input=new float[]{rec.x, rec.y, rec.x+rec.width, rec.y, rec.x+rec.width, rec.y+rec.height, rec.x, rec.y+rec.height};
@@ -297,7 +318,19 @@ public class GameScreen_2 implements Screen {
 		   return false;
 	   }
    }
-  
+   
+   //--Feeding in new things--
+   
+   private void feed_in_new_thing(){
+	   if (LEVEL==1){
+		   feed_in_new_thing_l1();
+	   }
+   }
+   
+   private void feed_in_new_thing_l1(){
+	   
+   }
+   
    //--Game functions--
    
    //(The below functions are those which are more on the 'game' side of the 'math game')
@@ -332,9 +365,23 @@ public class GameScreen_2 implements Screen {
 	   spawnMine_II(k);
 	   
    }
+   
+   
    private void spawnRandomMine_l(){
 	   int k=MathUtils.random(1,3);
 	   spawnMine_II(k);
+	   
+   }
+   
+   private void spawn2Mines_r(){
+	   spawnMine_II(-3);
+	   spawnMine_II(-1);
+	   
+   }
+   
+   private void spawn2Mines_l(){
+	   spawnMine_II(3);
+	   spawnMine_II(1);
 	   
    }
    
@@ -397,25 +444,25 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l1(){
-	  if (seconds%12==0 && seconds<200){
+	  if (seconds%16==0 && seconds<200){
 		  spawnRandomMine_r();
 	  }
-	  if (seconds%12==1 && seconds<200){
+	  if (seconds%16==1 && seconds<200){
 		  spawnRandomMine_l();
 	  }
-	  if (seconds%12==2 && seconds<200){
+	  if (seconds%16==3 && seconds<200){
 		  spawnRandomMine_r();
 	  }
-	  if (seconds%12==4 && seconds<200){
+	  if (seconds%16==4 && seconds<200){
 		  spawnRandomMine_l();
 	  }
-	  if (seconds%12==6 && seconds<200){
+	  if (seconds%16==7 && seconds<200){
 		  spawnMine_II(0);
 	  }
-	  if (seconds%12==8 && seconds<200){
+	  if (seconds%16==11 && seconds<200){
 		  spawnRandomMine();
 	  }
-	  if (seconds%12==10 && seconds<200){
+	  if (seconds%16==14 && seconds<200){
 		  spawnRandomMine_l();
 		  spawnRandomMine_r();
 	  }
@@ -435,11 +482,18 @@ public class GameScreen_2 implements Screen {
 	  }
    }
    
-   private void cycle_the_lists(){
-	   line_cycle_posn=(line_cycle_posn+1)%line_cycle.length; //ADD 1 BACK IN ONCE LINE THING FIXED
-	   CURRENT_LINE=line_list[0];
-	   line_list[0]=line_list[1];
-	   line_list[1]=line_cycle[line_cycle_posn];
+   
+   //private void cycle_the_lists(){
+	 //  line_cycle_posn=(line_cycle_posn+1)%line_cycle.length;
+	   //CURRENT_LINE=line_list[0];
+	   //line_list[0]=line_list[1];
+	   //line_list[1]=line_cycle[line_cycle_posn];
+   //}
+   
+   private void new_option(int pick_no){
+	   line_list[pick_no]=line_cycle[MathUtils.random(0, line_cycle.length-1)];
+	   CURRENT_LINE="";
+	   charges-=3;
    }
    
    //---RENDER---
@@ -507,37 +561,37 @@ public class GameScreen_2 implements Screen {
     	  actual_dot.y=240;
     	  CURRENT_LINE="Circle_line";    			  
       }
-      
-      if(CURRENT_LINE=="Horizontal"){
-    	  batch.draw(i_shield_tr, -90, dot.y-3, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
+      if (charges>2){
+	      if(CURRENT_LINE=="Horizontal"){
+	    	  batch.draw(i_shield_tr, -90, dot.y-3, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
+	      }
+	      if(CURRENT_LINE=="Vertical"){
+	    	  batch.draw(i_shield_tr, dot.x+3, 0, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
+	      }
+	      if(CURRENT_LINE=="General_yinterc"){
+	    	  batch.draw(dotImage, 160-6, dot.y-6);
+	      }
+	      if(CURRENT_LINE=="General_line"){
+	    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+	    	  if(rounded_posn_x!=0){
+	    		  rotdeg=Math.atan((rounded_posn_y-prev_rounded_posn_y)/(rounded_posn_x-prev_rounded_posn_x))*180/Math.PI;
+	    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y-3, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
+	    	  }
+	      }
+	      if(CURRENT_LINE=="Circle_centre"){
+	    	  batch.draw(dotImage, dot.x-6, dot.y-6);
+	      }
+	     
+	      if(CURRENT_LINE=="Circle_line"){
+	    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+	    	  
+	    	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
+	    	  radius=(int)Math.max(radius, 1);
+	    	  if (radius<7 && radius>0){
+	    		  batch.draw(circles_t[radius], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS));
+	    	  }
+	      }
       }
-      if(CURRENT_LINE=="Vertical"){
-    	  batch.draw(i_shield_tr, dot.x+3, 0, 0, 0, 500f, 5f, 1f, 1f, 90f, true);
-      }
-      if(CURRENT_LINE=="General_yinterc"){
-    	  batch.draw(dotImage, 160-6, dot.y-6);
-      }
-      if(CURRENT_LINE=="General_line"){
-    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
-    	  if(rounded_posn_x!=0){
-    		  rotdeg=Math.atan((rounded_posn_y-prev_rounded_posn_y)/(rounded_posn_x-prev_rounded_posn_x))*180/Math.PI;
-    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y-3, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
-    	  }
-      }
-      if(CURRENT_LINE=="Circle_centre"){
-    	  batch.draw(dotImage, dot.x-6, dot.y-6);
-      }
-     
-      if(CURRENT_LINE=="Circle_line"){
-    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
-    	  
-    	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
-    	  radius=(int)Math.max(radius, 1);
-    	  if (radius<7 && radius>0){
-    		  batch.draw(circles_t[radius], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS));
-    	  }
-      }
-      
     //--Draw status bar and menu button--
       //(These have to be drawn last so the dot doesn't go over them.)
       
@@ -557,79 +611,68 @@ public class GameScreen_2 implements Screen {
       scorefont.draw(batch, df.format(score), 280, 440);
       
       
+      int [] n = {0,1,2};
+
+      for(int i : n ){
+    	  if (!(CURRENT_LINE!="" && picked==i)){
+    		  if (line_list[i]=="Horizontal"){
+    	    	  font.draw(batch, "y = b", 20+3, 480-25-25*i+17);
+    	      }
+    	      if (line_list[i]=="Vertical"){
+    	    	  font.draw(batch, "x = a", 20+3, 480-25-25*i+17);
+    	      }
+    	      if (line_list[i]=="General_yinterc"){
+    	    	  font.draw(batch, "y = mx + c", 20+3, 480-25-25*i+17);
+    	      }
+    	      if (line_list[i]=="Circle_line" || line_list[i]=="OriC_centre"){
+    	    	  font.draw(batch, "x^2 + y^2 = r^2", 20+3, 480-25-25*i+17);
+    	      }
+    	      if (line_list[i]=="Circle_centre"){
+    	    	  font.draw(batch, "(x-a)^2 + (y-b)^2 = r^2", 20+3, 480-25-25*i+17);
+    	      }
+    	  }
+      }
       
-      
-      if (line_list[1]=="Horizontal"){
-    	  font.draw(batch, "y = b", 20+3, 480-25+17);
-      }
-      if (line_list[1]=="Vertical"){
-    	  font.draw(batch, "x = a", 20+3, 480-25+17);
-      }
-      if (line_list[1]=="General_yinterc"){
-    	  font.draw(batch, "y = mx + c", 20+3, 480-25+17);
-      }
-      if (line_list[1]=="Circle_line" || line_list[1]=="OriC_centre"){
-    	  font.draw(batch, "x^2 + y^2 = r^2", 20+3, 480-25+17);
-      }
-      if (line_list[1]=="Circle_centre"){
-    	  font.draw(batch, "(x-a)^2 + (y-b)^2 = r^2", 20+3, 480-25+17);
-      }
-      
-      if (line_list[0]=="Horizontal"){
-    	  font.draw(batch, "y = b", 20+3, 480-50+17);
-      }
-      if (line_list[0]=="Vertical"){
-    	  font.draw(batch, "x = a", 20+3, 480-50+17);
-      }
-      if (line_list[0]=="General_yinterc"){
-    	  font.draw(batch, "y = mx + c", 20+3, 480-50+17);
-      }
-      if (line_list[0]=="Circle_line" || line_list[0]=="OriC_centre"){
-    	  font.draw(batch, "x^2 + y^2 = r^2", 20+3, 480-50+17);
-      }
-      if (line_list[0]=="Circle_centre"){
-    	  font.draw(batch, "(x-a)^2 + (y-b)^2 = r^2", 20+3, 480-50+17);
-      }
       
       
       if(CURRENT_LINE=="Horizontal"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-30-3, 480-Gdx.input.getY()+40-17);
     	  //greenfont.draw(batch, "y = "+(int)rounded_posn_y, Gdx.input.getX()-30, 480-Gdx.input.getY()+40);
-    	  greenfont.draw(batch, "y = "+(int)rounded_posn_y, 20+3, 480-75+17);
+    	  greenfont.draw(batch, "y = "+(int)rounded_posn_y, 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="Vertical"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  //greenfont.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, "x = "+(int)rounded_posn_x, 20+3, 480-75+17);
+    	  greenfont.draw(batch, "x = "+(int)rounded_posn_x, 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="General_yinterc"){
     	  //batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  if (rounded_posn_y>0){
     		  //greenfont.draw(batch, "y = mx + "+(int)rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = mx + "+(int)rounded_posn_y, 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = mx + "+(int)rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
     	  else if (rounded_posn_y==0){
     		  //greenfont.draw(batch, "y = mx", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = mx", 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = mx", 20+3, 480-25-25*picked+17);
     	  }
     	  else if (rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = mx -"+(int)-rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = mx -"+(int)-rounded_posn_y, 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = mx -"+(int)-rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
       }
       if(CURRENT_LINE=="General_line"){
     	  //batch.draw(ib_back, Gdx.input.getX()-50-5, 480-Gdx.input.getY()+10-17);
     	  if (rounded_posn_y>0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
     	  else if (rounded_posn_y==0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", 20+3, 480-25-25*picked+17);
     	  }
     	  else if (rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, 20+3, 480-75+17);
+    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
     	  
       }
@@ -656,7 +699,7 @@ public class GameScreen_2 implements Screen {
     	  }
     	  //batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  //greenfont.draw(batch, xpart + " + " + ypart + " = r^2", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, xpart + " + " + ypart + " = r^2", 20+3, 480-75+17);
+    	  greenfont.draw(batch, xpart + " + " + ypart + " = r^2", 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="Circle_line"){
     	  String xpart="";
@@ -686,7 +729,7 @@ public class GameScreen_2 implements Screen {
     		  //batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  }
     	  //greenfont.draw(batch, xpart + " + " + ypart + " = "+ radius*radius, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, xpart + " + " + ypart + " = "+ radius*radius,  20+3, 480-75+17);
+    	  greenfont.draw(batch, xpart + " + " + ypart + " = "+ radius*radius,  20+3, 480-25-25*picked+17);
       }
       batch.draw(shipImage, ship.x, ship.y);
       
@@ -854,17 +897,31 @@ public class GameScreen_2 implements Screen {
     		  if(ship.contains(Gdx.input.getX(), 480-Gdx.input.getY())){
     			  IS_TIME_HAPPENING=!IS_TIME_HAPPENING;
     		  }
+    		  else if(picks[0].contains(Gdx.input.getX(), 480-Gdx.input.getY())){
+    			  picked=0;
+    			  CURRENT_LINE=line_list[0];
+    		  }
+    		  else if(picks[1].contains(Gdx.input.getX(), 480-Gdx.input.getY())){
+    			  picked=1;
+    			  CURRENT_LINE=line_list[1];
+    		  }
+    		  else if(picks[2].contains(Gdx.input.getX(), 480-Gdx.input.getY())){
+    			  picked=2;
+    			  CURRENT_LINE=line_list[2];
+    		  }
     		  else{
-    			  if( charges>0 && IS_TIME_HAPPENING){
+    			  if( charges>2 && IS_TIME_HAPPENING){
     				  if (CURRENT_LINE=="Horizontal"){
     					  spawn_horizontal_i_shield(0, dot.y);
     					  score-=1;
-    					  cycle_the_lists();
+    					  //cycle_the_lists();
+    					  new_option(picked);
     				  }
     				  else if (CURRENT_LINE=="Vertical"){
     					  spawn_vertical_i_shield(dot.x, 0);
     					  score-=1;
-    					  cycle_the_lists();
+    					  //cycle_the_lists();
+    					  new_option(picked);
     				  }
     				  else if (CURRENT_LINE=="General_yinterc"){
     					  prev_rounded_posn_x=0;
@@ -876,7 +933,8 @@ public class GameScreen_2 implements Screen {
     				  else if (CURRENT_LINE=="General_line"){
     					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
     					  score-=1;
-    					  cycle_the_lists();
+    					  //cycle_the_lists();
+    					  new_option(picked);
     				  }
     				  else if (CURRENT_LINE=="Circle_centre"){
     					  prev_rounded_posn_x=rounded_posn_x;
@@ -890,9 +948,10 @@ public class GameScreen_2 implements Screen {
     					  spawn_circle_i_shield(actual_dot.x, actual_dot.y, (float)(radius*UNIT_LENGTH_IN_PIXELS));
     					  }
     					  score-=1;
-    					  cycle_the_lists();
+    					  //cycle_the_lists();
+    					  new_option(picked);
     				  }
-    				  //charges-=1;
+    				  
     				  
     			  }
     		  }

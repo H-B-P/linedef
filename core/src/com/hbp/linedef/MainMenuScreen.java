@@ -221,10 +221,10 @@ public class MainMenuScreen implements Screen {
 			float tp_x=Gdx.input.getX();
 			float tp_y=Gdx.input.getY();
 			if (!are_instructions_visible){
-				if (selector_prv_r.contains(tp_x, 480-tp_y) && MINESPEED>30){
+				if (selector_prv_r.contains(tp_x, 480-tp_y) && MINESPEED>10){
 					MINESPEED-=5;
 				}
-				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<150){
+				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<100){
 					MINESPEED+=5;
 				}
 				
