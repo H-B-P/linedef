@@ -227,15 +227,14 @@ public class GameScreen_2 implements Screen {
       
       //--Set up basics--
       spawnShield(1);
-      //spawnShield(2);
-      //spawnShield(3);
       font = new BitmapFont();
       font.setColor(Color.BLACK);
       scorefont = new BitmapFont();
       scorefont.setColor(Color.BLACK);
       greenfont = new BitmapFont();
       greenfont.setColor(Color.GREEN);
-      maxcharges=9;
+      maxcharges=3;
+      charges=3;
       
       //--Batch, Camera, Action--
       camera = new OrthographicCamera();
@@ -247,7 +246,7 @@ public class GameScreen_2 implements Screen {
       CURRENT_LINE="";
       picked=1;
       if (LEVEL==1){
-	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
+	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
       }
       if (LEVEL==2){
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
@@ -320,18 +319,6 @@ public class GameScreen_2 implements Screen {
 	   }
    }
    
-   //--Feeding in new things--
-   
-   private void feed_in_new_thing(){
-	   if (LEVEL==1){
-		   feed_in_new_thing_l1();
-	   }
-   }
-   
-   private void feed_in_new_thing_l1(){
-	   
-   }
-   
    //--Game functions--
    
    //(The below functions are those which are more on the 'game' side of the 'math game')
@@ -355,11 +342,11 @@ public class GameScreen_2 implements Screen {
 	      mines.add(mine);
 	   }
    
-   private void spawnMine(int xposn, float yposn) {
+   private void spawnMine(int xposn, int yposn) {
 	      Rectangle mine = new Rectangle();
-	      Double xposn_II = (xposn*40.0+160.0)-20.0;
+	      Double xposn_II = (xposn*20.0+160.0)-20.0;
 	      mine.x = xposn_II.floatValue();
-	      mine.y = 440+80*yposn;
+	      mine.y = 440+20*yposn;
 	      mine.width = 40;
 	      mine.height = 40;
 	      mines.add(mine);
@@ -403,7 +390,53 @@ public class GameScreen_2 implements Screen {
    
    private void spawnVertPair(int posn){
 	   spawnMine(posn,0);
-	   spawnMine(posn,1.5f);
+	   spawnMine(posn,3);
+   }
+   
+   private void spawnYisXablePair(){
+	   int a=MathUtils.random(-5,1);
+	   int b=MathUtils.random(3, 4);
+	   int xpo_one=a;
+	   int xpo_two=a+b;
+	   int ypo_one=0;
+	   int ypo_two=b;
+	   spawnMine(xpo_one, ypo_one);
+	   spawnMine(xpo_two, ypo_two);
+   }
+   
+   private void spawnYisminusXablePair(){
+	   int a=MathUtils.random(-5,1);
+	   int b=MathUtils.random(3, 4);
+	   int xpo_one=a;
+	   int xpo_two=a+b;
+	   int ypo_one=0;
+	   int ypo_two=b;
+	   spawnMine(-xpo_one, ypo_one);
+	   spawnMine(-xpo_two, ypo_two);
+   }
+   
+   private void spawnMXablePair_points_right(){
+	   int a=MathUtils.random(-5,1);
+	   int b=MathUtils.random(3, 4);
+	   int c=MathUtils.random(0,5-(a+b));
+	   int xpo_one=a;
+	   int xpo_two=a+b+c;
+	   int ypo_one=0;
+	   int ypo_two=b;
+	   spawnMine(xpo_one, ypo_one);
+	   spawnMine(xpo_two, ypo_two);
+   }
+
+   private void spawnMXablePair_points_left(){
+	   int a=MathUtils.random(-5,1);
+	   int b=MathUtils.random(3, 4);
+	   int c=MathUtils.random(0,5-(a+b));
+	   int xpo_one=a;
+	   int xpo_two=a+b+c;
+	   int ypo_one=0;
+	   int ypo_two=b;
+	   spawnMine(-xpo_one, ypo_one);
+	   spawnMine(-xpo_two, ypo_two);
    }
    
    private void spawn_horizontal_i_shield(float x,float y) {
@@ -790,7 +823,7 @@ public class GameScreen_2 implements Screen {
     	  
     	  //Updates to charges
     	  if(charges<maxcharges){
-    		  charges+=1;
+    		  //charges+=1;
     	  }
     	  //Events!
     	  
