@@ -921,9 +921,11 @@ public class GameScreen_2 implements Screen {
       
       if (Gdx.input.isKeyJustPressed(Keys.DOWN)){
     	  picked=(picked+1)%3;
+    	  CURRENT_LINE=line_list[picked];
       }
       if (Gdx.input.isKeyJustPressed(Keys.UP)){
     	  picked=(picked+2)%3;
+    	  CURRENT_LINE=line_list[picked];
       }
       
       //--If the screen just finished being touched, kill any mines overlapping the dot--
