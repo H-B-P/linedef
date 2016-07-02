@@ -122,10 +122,11 @@ public class GameScreen_2 implements Screen {
    private int MINESPEED;
    
    private String[] line_list;
-   private String[] line_cycle;
    //private int line_cycle_posn;
    
    private int picked;
+   
+   private int[] pick_ints;
    
  //---Do all the initial stuff that happens on rendering---
    
@@ -247,11 +248,9 @@ public class GameScreen_2 implements Screen {
       picked=1;
       if (LEVEL==1){
 	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
-	      line_cycle=new String[]{"Horizontal", "Vertical", "OriI_yinterc"};
       }
       if (LEVEL==2){
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
-    	  line_cycle=new String[]{"Horizontal", "Horizontal", "Vertical","Vertical","Vertical", "OriC_centre"};
       }
       
       
@@ -356,6 +355,16 @@ public class GameScreen_2 implements Screen {
 	      mines.add(mine);
 	   }
    
+   private void spawnMine(int xposn, float yposn) {
+	      Rectangle mine = new Rectangle();
+	      Double xposn_II = (xposn*40.0+160.0)-20.0;
+	      mine.x = xposn_II.floatValue();
+	      mine.y = 440+80*yposn;
+	      mine.width = 40;
+	      mine.height = 40;
+	      mines.add(mine);
+	   }
+   
    private void spawnRandomMine(){
 	   int k=MathUtils.random(-3,3);
 	   spawnMine_II(k);
@@ -385,6 +394,16 @@ public class GameScreen_2 implements Screen {
 	   spawnMine_II(3);
 	   spawnMine_II(1);
 	   
+   }
+   
+   private void spawnHorPair(){
+	   spawnRandomMine_r();
+	   spawnRandomMine_l();
+   }
+   
+   private void spawnVertPair(int posn){
+	   spawnMine(posn,0);
+	   spawnMine(posn,1.5f);
    }
    
    private void spawn_horizontal_i_shield(float x,float y) {
@@ -492,9 +511,7 @@ public class GameScreen_2 implements Screen {
 	   //line_list[1]=line_cycle[line_cycle_posn];
    //}
    
-   private void new_option(int pick_no){
-	   line_list[pick_no]=line_cycle[MathUtils.random(0, line_cycle.length-1)];
-	   CURRENT_LINE="";
+   private void after_shot(){
 	   charges-=3;
    }
    
@@ -902,6 +919,13 @@ public class GameScreen_2 implements Screen {
     	  IS_TIME_HAPPENING=!IS_TIME_HAPPENING;
       }
       
+      if (Gdx.input.isKeyJustPressed(Keys.DOWN)){
+    	  picked=(picked+1)%3;
+      }
+      if (Gdx.input.isKeyJustPressed(Keys.UP)){
+    	  picked=(picked+2)%3;
+      }
+      
       //--If the screen just finished being touched, kill any mines overlapping the dot--
       //(also, pause/unpause if they untouched over the ship)
       if (Gdx.input.isTouched()){
@@ -929,13 +953,13 @@ public class GameScreen_2 implements Screen {
     					  spawn_horizontal_i_shield(0, dot.y);
     					  score-=1;
     					  //cycle_the_lists();
-    					  new_option(picked);
+    					  after_shot();
     				  }
     				  else if (CURRENT_LINE=="Vertical"){
     					  spawn_vertical_i_shield(dot.x, 0);
     					  score-=1;
     					  //cycle_the_lists();
-    					  new_option(picked);
+    					  after_shot();
     				  }
     				  else if (CURRENT_LINE=="General_yinterc"){
     					  prev_rounded_posn_x=0;
@@ -948,7 +972,7 @@ public class GameScreen_2 implements Screen {
     					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
     					  score-=1;
     					  //cycle_the_lists();
-    					  new_option(picked);
+    					  after_shot();
     				  }
     				  else if (CURRENT_LINE=="Circle_centre"){
     					  prev_rounded_posn_x=rounded_posn_x;
@@ -963,7 +987,7 @@ public class GameScreen_2 implements Screen {
     					  }
     					  score-=1;
     					  //cycle_the_lists();
-    					  new_option(picked);
+    					  after_shot();
     				  }
     				  
     				  
