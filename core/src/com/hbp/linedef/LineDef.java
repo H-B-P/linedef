@@ -15,7 +15,7 @@ public class LineDef extends Game {
 	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		this.setScreen(new MainMenuScreen(this, "LINE", 20));
+		this.setScreen(new MainMenuScreen(this, "LINE", 50));
 	}
 
 	public void render() {

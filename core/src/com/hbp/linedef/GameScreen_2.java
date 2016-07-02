@@ -120,6 +120,7 @@ public class GameScreen_2 implements Screen {
    private int LEVEL;
    public String GENRE;
    private int MINESPEED;
+   private int ORIGINAL_MINESPEED;
    
    private String[] line_list;
    //private int line_cycle_posn;
@@ -138,6 +139,7 @@ public class GameScreen_2 implements Screen {
       LEVEL=level;
       GENRE=genre;
       MINESPEED=minespeed;
+      ORIGINAL_MINESPEED=minespeed;
       
       //--Set up highscores--
       
@@ -233,8 +235,8 @@ public class GameScreen_2 implements Screen {
       scorefont.setColor(Color.BLACK);
       greenfont = new BitmapFont();
       greenfont.setColor(Color.GREEN);
-      maxcharges=3;
-      charges=3;
+      maxcharges=6;
+      charges=0;
       
       //--Batch, Camera, Action--
       camera = new OrthographicCamera();
@@ -243,8 +245,7 @@ public class GameScreen_2 implements Screen {
       
       UNIT_LENGTH_IN_PIXELS=40;
       
-      CURRENT_LINE="";
-      picked=1;
+      
       if (LEVEL==1){
 	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
       }
@@ -252,6 +253,8 @@ public class GameScreen_2 implements Screen {
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
       }
       
+      CURRENT_LINE=line_list[1];
+      picked=1;
       
       circles_t=new Texture[8];
       
@@ -390,7 +393,7 @@ public class GameScreen_2 implements Screen {
    
    private void spawnVertPair(int posn){
 	   spawnMine(posn,0);
-	   spawnMine(posn,3);
+	   spawnMine(posn,4);
    }
    
    private void spawnYisXablePair(){
@@ -489,6 +492,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave(){
+	   
 	   if (LEVEL==1){
 		   wave_l1();
 	   }
@@ -498,27 +502,21 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l1(){
-	  if (seconds%16==0 && seconds<200){
-		  spawnRandomMine_r();
-	  }
-	  if (seconds%16==1 && seconds<200){
-		  spawnRandomMine_l();
-	  }
-	  if (seconds%16==3 && seconds<200){
-		  spawnRandomMine_r();
-	  }
-	  if (seconds%16==4 && seconds<200){
-		  spawnRandomMine_l();
-	  }
-	  if (seconds%16==7 && seconds<200){
-		  spawnMine_II(0);
-	  }
-	  if (seconds%16==11 && seconds<200){
-		  spawnRandomMine();
-	  }
-	  if (seconds%16==14 && seconds<200){
-		  spawnRandomMine_l();
-		  spawnRandomMine_r();
+	  if (seconds%4==0 && seconds<200){
+		  int k=MathUtils.random(1,4);
+		  //charges=Math.min(charges+3, maxcharges);
+		  if (k==1){
+			  spawnMXablePair_points_right();
+		  }
+		  if (k==2){
+			  spawnMXablePair_points_left();
+		  }
+		  if (k==3){
+			  spawnHorPair();
+		  }
+		  if (k==4){
+			  spawnVertPair(MathUtils.random(-3,3)*2);
+		  }
 	  }
    }
    
@@ -546,6 +544,7 @@ public class GameScreen_2 implements Screen {
    
    private void after_shot(){
 	   charges-=3;
+	   //CURRENT_LINE="";
    }
    
    //---RENDER---
@@ -634,6 +633,14 @@ public class GameScreen_2 implements Screen {
 	      }
 	      if(CURRENT_LINE=="General_line"){
 	    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
+	    	  if (rounded_posn_x==0){
+	    		  if (posn_x>0){
+	    			  rounded_posn_x=1;
+	    		  }
+	    		  else{
+	    			  rounded_posn_x=-1;
+	    		  }
+	    	  }
 	    	  if(rounded_posn_x!=0){
 	    		  rotdeg=Math.atan((rounded_posn_y-prev_rounded_posn_y)/(rounded_posn_x-prev_rounded_posn_x))*180/Math.PI;
 	    		  batch.draw(i_shield_tr, actual_dot.x-500, actual_dot.y-3, 500f, 0, 1000f, 5f, 1f, 1f, (float)rotdeg, true);
@@ -726,15 +733,15 @@ public class GameScreen_2 implements Screen {
       }
       if(CURRENT_LINE=="General_line"){
     	  //batch.draw(ib_back, Gdx.input.getX()-50-5, 480-Gdx.input.getY()+10-17);
-    	  if (rounded_posn_y>0){
+    	  if (prev_rounded_posn_y>0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
     		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
-    	  else if (rounded_posn_y==0){
+    	  else if (prev_rounded_posn_y==0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
     		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", 20+3, 480-25-25*picked+17);
     	  }
-    	  else if (rounded_posn_y<0){
+    	  else if (prev_rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
     		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
@@ -823,7 +830,7 @@ public class GameScreen_2 implements Screen {
     	  
     	  //Updates to charges
     	  if(charges<maxcharges){
-    		  //charges+=1;
+    		  charges+=1;
     	  }
     	  //Events!
     	  
@@ -898,7 +905,8 @@ public class GameScreen_2 implements Screen {
 		         	iter.remove();
 		         	deadyet=true;
 		         	shieldImage=shieldImage_flicker;
-		            score-=5;
+		            //score-=5;
+		         	MINESPEED=ORIGINAL_MINESPEED;
 		          }
 		     }
 		     
@@ -909,7 +917,8 @@ public class GameScreen_2 implements Screen {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=2;
+		            score+=1;
+		            //MINESPEED+=5;
 		          }
 		     }
 		     
@@ -920,7 +929,8 @@ public class GameScreen_2 implements Screen {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=2;
+		            score+=1;
+		            //MINESPEED+=5;
 		          }
 		     }
 		     
@@ -931,7 +941,8 @@ public class GameScreen_2 implements Screen {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=2;
+		            score+=1;
+		            //MINESPEED+=5;
 		          }
 		     }
 		     
@@ -942,7 +953,8 @@ public class GameScreen_2 implements Screen {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
-		            score+=2;
+		            score+=1;
+		            //MINESPEED+=5;
 		          }
 		     }
 		  }
@@ -953,11 +965,15 @@ public class GameScreen_2 implements Screen {
       }
       
       if (Gdx.input.isKeyJustPressed(Keys.DOWN)){
-    	  picked=(picked+1)%3;
+    	  picked=2;
+    	  CURRENT_LINE=line_list[picked];
+      }
+      if (Gdx.input.isKeyJustPressed(Keys.RIGHT)){
+    	  picked=1;
     	  CURRENT_LINE=line_list[picked];
       }
       if (Gdx.input.isKeyJustPressed(Keys.UP)){
-    	  picked=(picked+2)%3;
+    	  picked=0;
     	  CURRENT_LINE=line_list[picked];
       }
       
@@ -986,13 +1002,13 @@ public class GameScreen_2 implements Screen {
     			  if( charges>2 && IS_TIME_HAPPENING){
     				  if (CURRENT_LINE=="Horizontal"){
     					  spawn_horizontal_i_shield(0, dot.y);
-    					  score-=1;
+    					  //score-=1;
     					  //cycle_the_lists();
     					  after_shot();
     				  }
     				  else if (CURRENT_LINE=="Vertical"){
     					  spawn_vertical_i_shield(dot.x, 0);
-    					  score-=1;
+    					  //score-=1;
     					  //cycle_the_lists();
     					  after_shot();
     				  }
@@ -1005,7 +1021,7 @@ public class GameScreen_2 implements Screen {
     				  }
     				  else if (CURRENT_LINE=="General_line"){
     					  spawn_general_i_shield(actual_dot.y, (float)rotdeg);
-    					  score-=1;
+    					  //score-=1;
     					  //cycle_the_lists();
     					  after_shot();
     				  }
@@ -1020,7 +1036,7 @@ public class GameScreen_2 implements Screen {
     					  if (radius<7 && radius>0){
     					  spawn_circle_i_shield(actual_dot.x, actual_dot.y, (float)(radius*UNIT_LENGTH_IN_PIXELS));
     					  }
-    					  score-=1;
+    					  //score-=1;
     					  //cycle_the_lists();
     					  after_shot();
     				  }
