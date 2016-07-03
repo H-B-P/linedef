@@ -561,7 +561,7 @@ public class GameScreen_2 implements Screen {
 			  if (k==1){
 				  spawnHorPair();
 			  }
-			  if (k<1){
+			  if (k>1){
 				  spawnVertPair();
 			  }
 	   }
