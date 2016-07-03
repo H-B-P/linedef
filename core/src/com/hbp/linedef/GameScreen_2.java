@@ -596,8 +596,11 @@ public class GameScreen_2 implements Screen {
       if(Gdx.input.getY()>80 && Gdx.input.getY()<480 && Gdx.input.getX()>0 && Gdx.input.getX()<320){
     	  posn_x=(Gdx.input.getX()-160)/UNIT_LENGTH_IN_PIXELS;
     	  posn_y=-(Gdx.input.getY()-240)/UNIT_LENGTH_IN_PIXELS;
-    	  rounded_posn_x=Math.round((float)posn_x);
-    	  rounded_posn_y=Math.round((float)posn_y);
+    	  rounded_posn_x=posn_x;
+    	  rounded_posn_y=posn_y;
+    	  
+    	  //rounded_posn_x=Math.round((float)posn_x)/10;
+    	  //rounded_posn_y=Math.round((float)posn_y)/10;
     	  xd=posn_x-prev_rounded_posn_x;
     	  yd=posn_y-prev_rounded_posn_y;
       }
