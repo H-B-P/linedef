@@ -254,7 +254,7 @@ public class GameScreen_2 implements Screen {
 	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
       }
       if (LEVEL==3){
-	      line_list=new String[]{"Vertical", "Horizontal", "Horizontal"};
+	      line_list=new String[]{"Vertical", "Vertical", "Horizontal"};
       }
       if (LEVEL==4){
 	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
@@ -756,18 +756,18 @@ public class GameScreen_2 implements Screen {
       if(CURRENT_LINE=="Horizontal"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-30-3, 480-Gdx.input.getY()+40-17);
     	  //greenfont.draw(batch, "y = "+(int)rounded_posn_y, Gdx.input.getX()-30, 480-Gdx.input.getY()+40);
-    	  greenfont.draw(batch, "y = "+(int)rounded_posn_y, 20+3, 480-25-25*picked+17);
+    	  greenfont.draw(batch, "y = "+df.format(rounded_posn_y), 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="Vertical"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  //greenfont.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, "x = "+(int)rounded_posn_x, 20+3, 480-25-25*picked+17);
+    	  greenfont.draw(batch, "x = "+df.format(rounded_posn_x), 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="General_yinterc"){
     	  //batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  if (rounded_posn_y>0){
     		  //greenfont.draw(batch, "y = mx + "+(int)rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = mx + "+(int)rounded_posn_y, 20+3, 480-25-25*picked+17);
+    		  greenfont.draw(batch, "y = mx + "+df.format(rounded_posn_y), 20+3, 480-25-25*picked+17);
     	  }
     	  else if (rounded_posn_y==0){
     		  //greenfont.draw(batch, "y = mx", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
@@ -775,18 +775,18 @@ public class GameScreen_2 implements Screen {
     	  }
     	  else if (rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = mx -"+(int)-rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = mx -"+(int)-rounded_posn_y, 20+3, 480-25-25*picked+17);
+    		  greenfont.draw(batch, "y = mx -"+df.format(-rounded_posn_y), 20+3, 480-25-25*picked+17);
     	  }
       }
       if(CURRENT_LINE=="General_line"){
     	  //batch.draw(ib_back, Gdx.input.getX()-50-5, 480-Gdx.input.getY()+10-17);
     	  if (prev_rounded_posn_y>0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x + "+(int)prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
+    		  greenfont.draw(batch, "y = (" +df.format(rounded_posn_y-prev_rounded_posn_y)+"/"+df.format(rounded_posn_x-prev_rounded_posn_x) + ")x + "+df.format(prev_rounded_posn_y), 20+3, 480-25-25*picked+17);
     	  }
     	  else if (prev_rounded_posn_y==0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x", 20+3, 480-25-25*picked+17);
+    		  greenfont.draw(batch, "y = (" +df.format(rounded_posn_y-prev_rounded_posn_y)+"/"+df.format(rounded_posn_x-prev_rounded_posn_x) + ")x", 20+3, 480-25-25*picked+17);
     	  }
     	  else if (prev_rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
