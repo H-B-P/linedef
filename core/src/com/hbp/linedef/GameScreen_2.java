@@ -54,13 +54,14 @@ public class GameScreen_2 implements Screen {
    private Texture ib_back_smol;
    private Texture ib_back_large;
    private Texture[] circles_t;
+   private TextureRegion[] circles_tr;
    
    private Rectangle[] picks;
    
    private SpriteBatch batch;
    private OrthographicCamera camera;
    
-   private int radius;
+   private double radius;
    private double xd;
    private double yd;
    private Rectangle dot;
@@ -267,10 +268,11 @@ public class GameScreen_2 implements Screen {
       picked=1;
       
       circles_t=new Texture[8];
-      
+      circles_tr=new TextureRegion[8];
       for(int i=0; i<7; i++){
 			if (Gdx.files.internal("circle_r_"+i+".png").exists()){
 				circles_t[i]=new Texture(Gdx.files.internal("circle_r_"+i+".png"));
+				circles_tr[i]=new TextureRegion(circles_t[i]);
 			}
       }
       
@@ -524,6 +526,9 @@ public class GameScreen_2 implements Screen {
 	   if (LEVEL==4){
 		   wave_l4();
 	   }
+	   if (LEVEL==5){
+		   wave_l5();
+	   }
    }
    private void wave_l1(){
 	   if (seconds%4==0 && seconds<200){
@@ -585,6 +590,9 @@ public class GameScreen_2 implements Screen {
 		  }
    }
    
+   private void wave_l5(){
+	   wave_l4();
+   }
    
    //private void cycle_the_lists(){
 	 //  line_cycle_posn=(line_cycle_posn+1)%line_cycle.length;
@@ -594,7 +602,7 @@ public class GameScreen_2 implements Screen {
    //}
    
    private void after_shot(){
-	   charges-=3;
+	   //charges-=3; //PUT THIS BACK AFTER FIX CIRCS
 	   last_charge_event_time=total_time;
 	   //CURRENT_LINE="";
    }
@@ -722,10 +730,14 @@ public class GameScreen_2 implements Screen {
 	      if(CURRENT_LINE=="Circle_line"){
 	    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
 	    	  
-	    	  radius=(int)Math.round(Math.sqrt(xd*xd+yd*yd));
-	    	  radius=(int)Math.max(radius, 1);
-	    	  if (radius<7 && radius>0){
-	    		  batch.draw(circles_t[radius], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS));
+	    	  radius=Math.sqrt(xd*xd+yd*yd);
+	    	  //radius=Math.max(radius, 0.5);
+	    	  if (radius<6){
+	    		  //batch.draw(circles_tr[(int)Math.round(radius)], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS), actual_dot.x, actual_dot.y, (float)(2*Math.round(radius)), (float)(2*Math.round(radius)), (float)(radius/Math.round(radius)), (float)(radius/Math.round(radius)), 0);
+	    		  batch.draw(circles_t[(int)Math.round(radius)], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS),(float)(80*radius),(float)(80*radius));//, (float)(radius), (float)(radius));
+	    	  }
+	    	  else{
+	    		  batch.draw(circles_t[6], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS),(float)(80*radius),(float)(80*radius));//, (float)(radius), (float)(radius));
 	    	  }
 	      }
       }
@@ -823,7 +835,7 @@ public class GameScreen_2 implements Screen {
     	  }
     	  else if (prev_rounded_posn_y<0){
     		  //greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    		  greenfont.draw(batch, "y = (" +(int)(rounded_posn_y-prev_rounded_posn_y)+"/"+(int)(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
+    		  greenfont.draw(batch, "y = (" +df.format(rounded_posn_y-prev_rounded_posn_y)+"/"+df.format(rounded_posn_x-prev_rounded_posn_x) + ")x - "+(int)-prev_rounded_posn_y, 20+3, 480-25-25*picked+17);
     	  }
     	  
       }
@@ -831,22 +843,22 @@ public class GameScreen_2 implements Screen {
     	  String xpart="";
     	  String ypart="";
     	  if (rounded_posn_x>0){
-    		  xpart="(x-"+(int)rounded_posn_x+")^2";
+    		  xpart="(x-"+df.format(rounded_posn_x)+")^2";
     	  }
     	  if(rounded_posn_x==0){
     		  xpart="x^2";
     	  }
     	  if (rounded_posn_x<0){
-    		  xpart="(x+"+(int)-rounded_posn_x+")^2";
+    		  xpart="(x+"+df.format(-rounded_posn_x)+")^2";
     	  }
     	  if (rounded_posn_y>0){
-    		  ypart="(y-"+(int)rounded_posn_y+")^2";
+    		  ypart="(y-"+df.format(rounded_posn_y)+")^2";
     	  }
     	  if(rounded_posn_y==0){
     		  ypart="y^2";
     	  }
     	  if (rounded_posn_y<0){
-    		  ypart="(y+"+(int)-rounded_posn_y+")^2";
+    		  ypart="(y+"+df.format(-rounded_posn_y)+")^2";
     	  }
     	  //batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  //greenfont.draw(batch, xpart + " + " + ypart + " = r^2", Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
@@ -856,22 +868,22 @@ public class GameScreen_2 implements Screen {
     	  String xpart="";
     	  String ypart="";
     	  if (prev_rounded_posn_x>0){
-    		  xpart="(x-"+(int)prev_rounded_posn_x+")^2";
+    		  xpart="(x-"+df.format(prev_rounded_posn_x)+")^2";
     	  }
     	  if(prev_rounded_posn_x==0){
     		  xpart="x^2";
     	  }
     	  if (prev_rounded_posn_x<0){
-    		  xpart="(x+"+(int)-prev_rounded_posn_x+")^2";
+    		  xpart="(x+"+df.format(-prev_rounded_posn_x)+")^2";
     	  }
     	  if (prev_rounded_posn_y>0){
-    		  ypart="(y-"+(int)prev_rounded_posn_y+")^2";
+    		  ypart="(y-"+df.format(prev_rounded_posn_y)+")^2";
     	  }
     	  if(prev_rounded_posn_y==0){
     		  ypart="y^2";
     	  }
     	  if (prev_rounded_posn_y<0){
-    		  ypart="(y+"+(int)-prev_rounded_posn_y+")^2";
+    		  ypart="(y+"+df.format(-prev_rounded_posn_y)+")^2";
     	  }
     	  if(prev_rounded_posn_y==0 && prev_rounded_posn_x==0){
     		  //batch.draw(ib_back, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
@@ -880,7 +892,7 @@ public class GameScreen_2 implements Screen {
     		  //batch.draw(ib_back_large, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  }
     	  //greenfont.draw(batch, xpart + " + " + ypart + " = "+ radius*radius, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, xpart + " + " + ypart + " = "+ radius*radius,  20+3, 480-25-25*picked+17);
+    	  greenfont.draw(batch, xpart + " + " + ypart + " = "+ df.format(radius) + "^2",  20+3, 480-25-25*picked+17);
       }
       batch.draw(shipImage, ship.x, ship.y);
       
@@ -993,7 +1005,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<Kaboom> iterod = horizontal_i_shields.iterator();
 		     while(iterod.hasNext()) {
 		    	 Kaboom other_dot = iterod.next();
-		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y>450) {
+		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y<450) {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1005,7 +1017,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<Kaboom> itervs = vertical_i_shields.iterator();
 		     while(itervs.hasNext()) {
 		    	 Kaboom other_dot = itervs.next();
-		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y>450) {
+		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y<450) {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1017,7 +1029,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<PolyKaboom> itergs = general_i_shields.iterator();
 		     while(itergs.hasNext()) {
 		    	 PolyKaboom other_dot = itergs.next();
-		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet && mine.y>450) {
+		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet && mine.y<450) {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1029,7 +1041,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<CircleKaboom> itercs = circle_i_shields.iterator();
 		     while(itercs.hasNext()) {
 		    	 CircleKaboom other_dot = itercs.next();
-		    	 if(Circle_intersects_Rectangle(other_dot.circ, mine) && !deadyet && mine.y>450) {
+		    	 if(Circle_intersects_Rectangle(other_dot.circ, mine) && !deadyet && mine.y<450) {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1121,9 +1133,7 @@ public class GameScreen_2 implements Screen {
     					  CURRENT_LINE="Circle_line";
     				  }
     				  else if (CURRENT_LINE=="Circle_line"){
-    					  if (radius<7 && radius>0){
     					  spawn_circle_i_shield(actual_dot.x, actual_dot.y, (float)(radius*UNIT_LENGTH_IN_PIXELS));
-    					  }
     					  //score-=1;
     					  //cycle_the_lists();
     					  after_shot();

@@ -16,6 +16,9 @@ public class MainMenuScreen implements Screen {
     final LineDef game;
 	OrthographicCamera camera;
 	
+	private Rectangle nxt_r;
+	private Rectangle prv_r;
+	
 	private Texture nxt_t;
 	private Texture prv_t;
 	
@@ -75,8 +78,22 @@ public class MainMenuScreen implements Screen {
 		
 		prefs = Gdx.app.getPreferences("galen_preferences");
 		if (GENRE=="LINE"){
-			score_one=prefs.getInteger("score_LINE_auto");
-			score_two=prefs.getInteger("score_LINE_nonauto");
+			score_one=prefs.getInteger("score_LINE_1");
+			score_two=prefs.getInteger("score_LINE_2");
+			score_three=prefs.getInteger("score_LINE_3");
+			score_four=prefs.getInteger("score_LINE_4");
+			
+			one_t = new Texture(Gdx.files.internal("button_lines_ortho.png"));
+			two_t = new Texture(Gdx.files.internal("button_lines_grad.png"));
+			three_t = new Texture(Gdx.files.internal("button_lines_add.png"));
+			four_t = new Texture(Gdx.files.internal("button_lines_general.png"));
+		}
+		
+		if (GENRE=="CIRCLE"){
+			score_one=prefs.getInteger("score_CIRCLE_1");
+			score_two=prefs.getInteger("score_CIRCLE_2");
+			score_three=prefs.getInteger("score_CIRCLE_3");
+			score_four=prefs.getInteger("score_CIRCLE_4");
 			
 			one_t = new Texture(Gdx.files.internal("button_lines_ortho.png"));
 			two_t = new Texture(Gdx.files.internal("button_lines_grad.png"));
@@ -175,6 +192,20 @@ public class MainMenuScreen implements Screen {
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 320, 480);
+		
+		nxt_r = new Rectangle();
+		nxt_r.x=260;
+		nxt_r.y=20;
+		nxt_r.height=40;
+		nxt_r.width=40;
+		nxt_t = new Texture(Gdx.files.internal("fwd_but.png"));
+		
+		prv_r = new Rectangle();
+		prv_r.x=20;
+		prv_r.y=20;
+		prv_r.height=40;
+		prv_r.width=40;
+		prv_t = new Texture(Gdx.files.internal("bak_but.png"));
 
 	}
 
@@ -222,6 +253,13 @@ public class MainMenuScreen implements Screen {
 		if (are_instructions_visible){
 			game.batch.draw(instructions_t, instructions_r.x, instructions_r.y);
 		}
+		
+		//
+		if (GENRE=="LINE"){
+			game.batch.draw(nxt_t, nxt_r.x, nxt_r.y);
+		}else{
+			game.batch.draw(prv_t, prv_r.x, prv_r.y);
+		}
 		game.batch.end();
 
 		if (Gdx.input.justTouched()) {
@@ -253,8 +291,40 @@ public class MainMenuScreen implements Screen {
 			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 4));
 			            dispose();
 					}
+					
+					
+					
+					if (nxt_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new MainMenuScreen(game, "CIRCLE", MINESPEED));
+			            dispose();
+					}
 	
 				}
+				if (GENRE=="CIRCLE"){
+					if (one_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 5));
+			            dispose();
+					}
+					if (two_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 6));
+			            dispose();
+					}
+					if (three_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 7));
+			            dispose();
+					}
+					if (four_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 8));
+			            dispose();
+					}
+					
+					if (prv_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new MainMenuScreen(game, "LINE", MINESPEED));
+			            dispose();
+					}
+	
+				}
+				
 			}
 			
 			if(((!instructions_r.contains(tp_x,480-tp_y))||(cancel_instructions_r.contains(tp_x,480-tp_y)))&&are_instructions_visible==true){
