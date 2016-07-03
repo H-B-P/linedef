@@ -401,9 +401,18 @@ public class GameScreen_2 implements Screen {
 	   spawnRandomMine_l();
    }
    
-   private void spawnVertPair(int posn){
+   private void spawnVertPair_o1(int posn){
+	   spawnMine(posn,0);
+	   spawnMine(posn+plusorminus(),4);
+   }
+   
+   private void spawnVertPair_o2(int posn){
 	   spawnMine(posn,0);
 	   spawnMine(posn,4);
+   }
+   
+   private void spawnVertPair(){
+	   spawnVertPair_o2(MathUtils.random(-6,6));
    }
    
    private void spawnYisXablePair(){
@@ -507,13 +516,13 @@ public class GameScreen_2 implements Screen {
 		   wave_l1();
 	   }
 	   if (LEVEL==2){
-		   wave_l1();
+		   wave_l2();
 	   }
 	   if (LEVEL==3){
 		   wave_l3();
 	   }
 	   if (LEVEL==4){
-		   wave_l3();
+		   wave_l4();
 	   }
    }
    private void wave_l1(){
@@ -526,12 +535,12 @@ public class GameScreen_2 implements Screen {
 				  spawnHorPair();
 			  }
 			  if (k==2){
-				  spawnVertPair(MathUtils.random(-6,6));
+				  spawnVertPair();
 			  }
 	   }
    }
    
-   private void wave_l3(){
+   private void wave_l2(){
 	   if (seconds%4==0){
 		   charges=Math.min(charges+3, maxcharges);
 	   }
@@ -547,11 +556,18 @@ public class GameScreen_2 implements Screen {
 			  spawnHorPair();
 		  }
 		  if (k==4){
-			  spawnVertPair(MathUtils.random(-6,6));
+			  spawnVertPair();
 		  }
 	  }
    }
    
+   private void wave_l3(){
+	   wave_l1();
+   }
+   
+   private void wave_l4(){
+	   wave_l2();
+   }
    
    
    //private void cycle_the_lists(){
