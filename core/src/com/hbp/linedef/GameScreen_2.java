@@ -235,7 +235,7 @@ public class GameScreen_2 implements Screen {
       scorefont.setColor(Color.BLACK);
       greenfont = new BitmapFont();
       greenfont.setColor(Color.GREEN);
-      maxcharges=6;
+      maxcharges=3;
       charges=0;
       
       //--Batch, Camera, Action--
@@ -245,11 +245,19 @@ public class GameScreen_2 implements Screen {
       
       UNIT_LENGTH_IN_PIXELS=40;
       
-      
       if (LEVEL==1){
-	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
+	      line_list=new String[]{"Vertical", "Horizontal", ""};
       }
       if (LEVEL==2){
+	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
+      }
+      if (LEVEL==3){
+	      line_list=new String[]{"Vertical", "Horizontal", "Horizontal"};
+      }
+      if (LEVEL==4){
+	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
+      }
+      if (LEVEL==5){
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
       }
       
@@ -497,14 +505,36 @@ public class GameScreen_2 implements Screen {
 		   wave_l1();
 	   }
 	   if (LEVEL==2){
-		   wave_l2();
+		   wave_l1();
+	   }
+	   if (LEVEL==3){
+		   wave_l3();
+	   }
+	   if (LEVEL==4){
+		   wave_l3();
+	   }
+   }
+   private void wave_l1(){
+	   if (seconds%4==0){
+		   charges=Math.min(charges+3, maxcharges);
+	   }
+	   if (seconds%4==0 && seconds<200){
+			  int k=MathUtils.random(1,2);
+			  if (k==1){
+				  spawnHorPair();
+			  }
+			  if (k==2){
+				  spawnVertPair(MathUtils.random(-6,6));
+			  }
 	   }
    }
    
-   private void wave_l1(){
+   private void wave_l3(){
+	   if (seconds%4==0){
+		   charges=Math.min(charges+3, maxcharges);
+	   }
 	  if (seconds%4==0 && seconds<200){
 		  int k=MathUtils.random(1,4);
-		  //charges=Math.min(charges+3, maxcharges);
 		  if (k==1){
 			  spawnMXablePair_points_right();
 		  }
@@ -515,24 +545,11 @@ public class GameScreen_2 implements Screen {
 			  spawnHorPair();
 		  }
 		  if (k==4){
-			  spawnVertPair(MathUtils.random(-3,3)*2);
+			  spawnVertPair(MathUtils.random(-6,6));
 		  }
 	  }
    }
    
-   private void wave_l2(){
-	  if (seconds%7==0 && seconds<200){
-		  spawnMine_II(0);
-	  }
-	  else{
-		  if (seconds%2==0 && seconds<200){
-			  spawnRandomMine_r();
-		  }
-		  if (seconds%2==1 && seconds<200){
-			  spawnRandomMine_l();
-		  }
-	  }
-   }
    
    
    //private void cycle_the_lists(){
@@ -833,7 +850,7 @@ public class GameScreen_2 implements Screen {
     	  
     	  //Updates to charges
     	  if(charges<maxcharges){
-    		  charges+=1;
+    		  //charges+=1;
     	  }
     	  //Events!
     	  
@@ -968,15 +985,11 @@ public class GameScreen_2 implements Screen {
       }
       
       if (Gdx.input.isKeyJustPressed(Keys.DOWN)){
-    	  picked=2;
-    	  CURRENT_LINE=line_list[picked];
-      }
-      if (Gdx.input.isKeyJustPressed(Keys.RIGHT)){
-    	  picked=1;
+    	  picked=(picked+1)%3;
     	  CURRENT_LINE=line_list[picked];
       }
       if (Gdx.input.isKeyJustPressed(Keys.UP)){
-    	  picked=0;
+    	  picked=(picked+2)%3;
     	  CURRENT_LINE=line_list[picked];
       }
       

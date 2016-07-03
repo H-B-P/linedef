@@ -78,10 +78,10 @@ public class MainMenuScreen implements Screen {
 			score_one=prefs.getInteger("score_LINE_auto");
 			score_two=prefs.getInteger("score_LINE_nonauto");
 			
-			one_t = new Texture(Gdx.files.internal("button_diagI.png"));
-			two_t = new Texture(Gdx.files.internal("button_diagII.png"));
-			three_t = new Texture(Gdx.files.internal("button_rot.png"));
-			four_t = new Texture(Gdx.files.internal("button_sing.png"));
+			one_t = new Texture(Gdx.files.internal("button_lines_ortho.png"));
+			two_t = new Texture(Gdx.files.internal("button_lines_grad.png"));
+			three_t = new Texture(Gdx.files.internal("button_lines_add.png"));
+			four_t = new Texture(Gdx.files.internal("button_lines_general.png"));
 		}
 		
 		but_instructions_r = new Rectangle();
@@ -201,6 +201,13 @@ public class MainMenuScreen implements Screen {
 		font.draw(game.batch, "SCORE:", two_r.x+180, two_r.y+35);
 		font.draw(game.batch, df.format(score_two), two_r.x+250, two_r.y+35);
 		
+		game.batch.draw(three_t, three_r.x, three_r.y);
+		font.draw(game.batch, "SCORE:", three_r.x+180, three_r.y+35);
+		font.draw(game.batch, df.format(score_three), three_r.x+250, three_r.y+35);
+		
+		game.batch.draw(four_t, four_r.x, four_r.y);
+		font.draw(game.batch, "SCORE:", four_r.x+180, four_r.y+35);
+		font.draw(game.batch, df.format(score_four), four_r.x+250, four_r.y+35);
 		
 		game.batch.draw(LIBRARY_t, LIBRARY_r.x, LIBRARY_r.y);
 		font.draw(game.batch, "GENRE:  " + GENRE, 170, 420);
@@ -236,6 +243,14 @@ public class MainMenuScreen implements Screen {
 					}
 					if (two_r.contains(tp_x,480-tp_y)){
 			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 2));
+			            dispose();
+					}
+					if (three_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 3));
+			            dispose();
+					}
+					if (four_r.contains(tp_x,480-tp_y)){
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 4));
 			            dispose();
 					}
 	
