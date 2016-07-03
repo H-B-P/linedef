@@ -993,7 +993,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<Kaboom> iterod = horizontal_i_shields.iterator();
 		     while(iterod.hasNext()) {
 		    	 Kaboom other_dot = iterod.next();
-		    	 if(other_dot.rect.overlaps(mine) && !deadyet) {
+		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y>450) {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1005,7 +1005,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<Kaboom> itervs = vertical_i_shields.iterator();
 		     while(itervs.hasNext()) {
 		    	 Kaboom other_dot = itervs.next();
-		    	 if(other_dot.rect.overlaps(mine) && !deadyet) {
+		    	 if(other_dot.rect.overlaps(mine) && !deadyet && mine.y>450) {
 		         	spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1017,7 +1017,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<PolyKaboom> itergs = general_i_shields.iterator();
 		     while(itergs.hasNext()) {
 		    	 PolyKaboom other_dot = itergs.next();
-		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet) {
+		    	 if(Rectangle_collides_with_Polygon(mine, other_dot.poly) && !deadyet && mine.y>450) {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
@@ -1029,7 +1029,7 @@ public class GameScreen_2 implements Screen {
 		     Iterator<CircleKaboom> itercs = circle_i_shields.iterator();
 		     while(itercs.hasNext()) {
 		    	 CircleKaboom other_dot = itercs.next();
-		    	 if(Circle_intersects_Rectangle(other_dot.circ, mine) && !deadyet) {
+		    	 if(Circle_intersects_Rectangle(other_dot.circ, mine) && !deadyet && mine.y>450) {
 		    		 spawnExplosion(mine.x,mine.y);
 		         	iter.remove();
 		         	deadyet=true;
