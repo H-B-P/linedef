@@ -114,6 +114,8 @@ public class GameScreen_2 implements Screen {
    
    private float total_time;
    
+   private float last_charge_event_time;
+   
    private double UNIT_LENGTH_IN_PIXELS;
    private String CURRENT_LINE;
    
@@ -516,7 +518,7 @@ public class GameScreen_2 implements Screen {
    }
    private void wave_l1(){
 	   if (seconds%4==0){
-		   charges=Math.min(charges+3, maxcharges);
+		   //charges=Math.min(charges+3, maxcharges);
 	   }
 	   if (seconds%4==0 && seconds<200){
 			  int k=MathUtils.random(1,2);
@@ -561,6 +563,7 @@ public class GameScreen_2 implements Screen {
    
    private void after_shot(){
 	   charges-=3;
+	   last_charge_event_time=total_time;
 	   //CURRENT_LINE="";
    }
    
@@ -572,6 +575,14 @@ public class GameScreen_2 implements Screen {
       if(IS_TIME_HAPPENING){
 	   total_time+=Gdx.graphics.getDeltaTime();
       }
+      
+      //--Adjust actual time and upd8--
+      
+      if (total_time>(last_charge_event_time+3)){
+    	  last_charge_event_time=total_time;
+    	  charges=Math.min(charges+3, maxcharges);
+      }
+      
 	  //--Update ship image used--
       shipImage = shipImages[charges];
       
