@@ -263,6 +263,16 @@ public class GameScreen_2 implements Screen {
       if (LEVEL==5){
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
       }
+      if (LEVEL==6){
+    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+      }
+      if (LEVEL==7){
+    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+      }
+      if (LEVEL==8){
+    	  line_list=new String[]{"Vertical", "Horizontal", "Circle_centre"};
+      }
+      
       
       CURRENT_LINE=line_list[1];
       picked=1;
@@ -403,6 +413,12 @@ public class GameScreen_2 implements Screen {
 	   spawnRandomMine_l();
    }
    
+   private void spawnHorTrio(){
+	   spawnMine(MathUtils.random(-6, -5),0);
+	   spawnMine(MathUtils.random(-1, 1),0);
+	   spawnMine(MathUtils.random(5, 6),0);
+   }
+   
    private void spawnVertPair_o1(int posn){
 	   spawnMine(posn,0);
 	   spawnMine(posn+plusorminus(),4);
@@ -415,6 +431,11 @@ public class GameScreen_2 implements Screen {
    
    private void spawnVertPair(){
 	   spawnVertPair_o2(MathUtils.random(-6,6));
+   }
+   
+   private void spawnLittleCirclePair(){
+	   spawnMine(0,3);
+	   spawnMine(3*plusorminus(),0);
    }
    
    private void spawnYisXablePair(){
@@ -529,6 +550,15 @@ public class GameScreen_2 implements Screen {
 	   if (LEVEL==5){
 		   wave_l5();
 	   }
+	   if (LEVEL==6){
+		   wave_l6();
+	   }
+	   if (LEVEL==7){
+		   wave_l7();
+	   }
+	   if (LEVEL==8){
+		   wave_l8();
+	   }
    }
    private void wave_l1(){
 	   if (seconds%4==0 && seconds<200){
@@ -591,6 +621,30 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l5(){
+	   if (seconds%5==0 && seconds<200){
+			  int k=MathUtils.random(1,4);
+			  if (k==1){
+				  spawnHorPair();
+			  }
+			  if (k==2){
+				  spawnLittleCirclePair();
+			  }
+			  if (k==3){
+				  spawnHorTrio();
+			  }
+			  if (k==4){
+				  spawnVertPair();
+			  }
+		  }
+   }
+   
+   private void wave_l6(){
+	   wave_l4();
+   }
+   private void wave_l7(){
+	   wave_l4();
+   }
+   private void wave_l8(){
 	   wave_l4();
    }
    
@@ -602,9 +656,9 @@ public class GameScreen_2 implements Screen {
    //}
    
    private void after_shot(){
-	   //charges-=3; //PUT THIS BACK AFTER FIX CIRCS
+	   charges-=3;
 	   last_charge_event_time=total_time;
-	   //CURRENT_LINE="";
+	   CURRENT_LINE=line_list[picked];
    }
    
    //---RENDER---
@@ -798,10 +852,15 @@ public class GameScreen_2 implements Screen {
     	  //greenfont.draw(batch, "y = "+(int)rounded_posn_y, Gdx.input.getX()-30, 480-Gdx.input.getY()+40);
     	  greenfont.draw(batch, "y = "+df.format(rounded_posn_y), 20+3, 480-25-25*picked+17);
       }
+      if(CURRENT_LINE=="Vertical"){
+    	  //batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
+    	  //greenfont.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
+    	  greenfont.draw(batch, "x = "+df.format(rounded_posn_x), 20+3, 480-25-25*picked+17);
+      }
       if(CURRENT_LINE=="Vertical_plus"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
     	  //greenfont.draw(batch, "x = "+(int)rounded_posn_x, Gdx.input.getX()-50, 480-Gdx.input.getY()+10);
-    	  greenfont.draw(batch, "(x - 2) = "+df.format(rounded_posn_x), 20+3, 480-25-25*picked+17);
+    	  greenfont.draw(batch, "(x + 2) = "+df.format(rounded_posn_x), 20+3, 480-25-25*picked+17);
       }
       if(CURRENT_LINE=="Vertical_minus"){
     	  //batch.draw(ib_back_smol, Gdx.input.getX()-50-3, 480-Gdx.input.getY()+10-17);
