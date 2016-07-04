@@ -498,7 +498,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void spawnMirroredHorPair_offset(){
-	   int a=plusorminus()*MathUtils.random(0,6);
+	   int a=plusorminus()*MathUtils.random(2,6);
 	   int b=MathUtils.random(1,4);
 	   spawnMine(a, 0);
 	   spawnMine(-a, b);
