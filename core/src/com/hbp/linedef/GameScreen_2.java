@@ -765,7 +765,7 @@ public class GameScreen_2 implements Screen {
    
    private void wave_l7(){
 	   if (seconds%5==0 && seconds<200){
-		  int k=MathUtils.random(1,6);
+		  int k=MathUtils.random(1,4);
 		  if (k==1 || k==2){
 			  spawnHorTrio();
 		  }
@@ -774,9 +774,6 @@ public class GameScreen_2 implements Screen {
 		  }
 		  if (k==4){
 			  spawnCentralBoxTrio();
-		  }
-		  if (k==5){
-			  spawnCentralDiamondTrio();
 		  }
 	  }
    }

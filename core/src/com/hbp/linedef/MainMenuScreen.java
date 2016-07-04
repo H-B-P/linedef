@@ -95,10 +95,10 @@ public class MainMenuScreen implements Screen {
 			score_three=prefs.getInteger("score_CIRCLE_3");
 			score_four=prefs.getInteger("score_CIRCLE_4");
 			
-			one_t = new Texture(Gdx.files.internal("button_circles_1.png"));
-			two_t = new Texture(Gdx.files.internal("button_circles_2.png"));
-			three_t = new Texture(Gdx.files.internal("button_circles_3.png"));
-			four_t = new Texture(Gdx.files.internal("button_switch.png"));
+			one_t = new Texture(Gdx.files.internal("button_circles_ori.png"));
+			two_t = new Texture(Gdx.files.internal("button_circles_arb.png"));
+			three_t = new Texture(Gdx.files.internal("button_circles_dof.png"));
+			four_t = new Texture(Gdx.files.internal("button_circles_all.png"));
 		}
 		
 		but_instructions_r = new Rectangle();
@@ -269,7 +269,7 @@ public class MainMenuScreen implements Screen {
 				if (selector_prv_r.contains(tp_x, 480-tp_y) && MINESPEED>40){
 					MINESPEED-=5;
 				}
-				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<100){
+				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<150){
 					MINESPEED+=5;
 				}
 				
