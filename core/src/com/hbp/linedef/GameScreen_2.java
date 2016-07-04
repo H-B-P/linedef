@@ -249,7 +249,7 @@ public class GameScreen_2 implements Screen {
       UNIT_LENGTH_IN_PIXELS=40;
       
       if (LEVEL==1){
-	      line_list=new String[]{"Vertical", "Horizontal", ""};
+	      line_list=new String[]{"Vertical", "Horizontal"};
       }
       if (LEVEL==2){
 	      line_list=new String[]{"Vertical", "Horizontal", "OriI_yinterc"};
@@ -258,24 +258,24 @@ public class GameScreen_2 implements Screen {
 	      line_list=new String[]{"Vertical_plus", "Vertical_minus", "Horizontal"};
       }
       if (LEVEL==4){
-	      line_list=new String[]{"Vertical", "Horizontal", "General_yinterc"};
+	      line_list=new String[]{"Vertical", "General_yinterc"};
       }
       if (LEVEL==5){
-    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+    	  line_list=new String[]{"OriC_centre"};
       }
       if (LEVEL==6){
-    	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
+    	  line_list=new String[]{"Circle_centre"};
       }
       if (LEVEL==7){
     	  line_list=new String[]{"Vertical", "Horizontal", "OriC_centre"};
       }
       if (LEVEL==8){
-    	  line_list=new String[]{"Vertical", "Horizontal", "Circle_centre"};
+    	  line_list=new String[]{"Vertical", "General_yinterc", "Circle_centre"};
       }
       
       
-      CURRENT_LINE=line_list[1];
-      picked=1;
+      CURRENT_LINE=line_list[0];
+      picked=0;
       
       circles_t=new Texture[8];
       circles_tr=new TextureRegion[8];
@@ -433,6 +433,13 @@ public class GameScreen_2 implements Screen {
 	   spawnVertPair_o2(MathUtils.random(-6,6));
    }
    
+   private void spawnVertTrio(){
+	   int pos=MathUtils.random(-6,6);
+	   spawnMine(pos, 0);
+	   spawnMine(pos, 4);
+	   spawnMine(pos, 8);
+   }
+   
    private void spawnLittleCirclePair(){
 	   spawnMine(0,3);
 	   spawnMine(3*plusorminus(),0);
@@ -482,6 +489,109 @@ public class GameScreen_2 implements Screen {
 	   int ypo_two=b;
 	   spawnMine(-xpo_one, ypo_one);
 	   spawnMine(-xpo_two, ypo_two);
+   }
+   
+   private void spawnMirroredHorPair(){
+	   int a=plusorminus()*MathUtils.random(2,6);
+	   spawnMine(a, 0);
+	   spawnMine(-a, 0);
+   }
+   
+   private void spawnMirroredHorPair_offset(){
+	   int a=plusorminus()*MathUtils.random(0,6);
+	   int b=MathUtils.random(1,4);
+	   spawnMine(a, 0);
+	   spawnMine(-a, b);
+   }
+   
+   private void spawnBoxQuartet(){
+	   int a=MathUtils.random(-4,4);
+	   spawnMine(a+2, 0);
+	   spawnMine(a-2, 0);
+	   spawnMine(a+2, 4);
+	   spawnMine(a-2, 4);
+   }
+   
+   private void spawnDiamondQuartet(){
+	   int a=MathUtils.random(-4,4);
+	   spawnMine(a, 0);
+	   spawnMine(a-2, 2);
+	   spawnMine(a+2, 2);
+	   spawnMine(a, 4);
+   }
+   
+   private void spawnBoxTrio(){
+	   int a=MathUtils.random(-4,4);
+	   int b=MathUtils.random(1,4);
+	   if (b!=1){
+		   spawnMine(a+2, 0);
+	   }
+	   if (b!=2){
+		   spawnMine(a-2, 0);
+	   }
+	   if (b!=3){
+		   spawnMine(a+2, 4);
+	   }
+	   if (b!=4){
+		   spawnMine(a-2, 4);
+	   }
+   }
+   
+   private void spawnDiamondTrio(){
+	   int a=MathUtils.random(-4,4);
+	   int b=MathUtils.random(1,4);
+	   if (b!=1){
+		   spawnMine(a, 0);
+	   }
+	   if (b!=2){
+		   spawnMine(a-2, 2);
+	   }
+	   if (b!=3){
+		   spawnMine(a+2, 2);
+	   }
+	   if (b!=4){
+		   spawnMine(a, 4);
+	   }
+   }
+   
+   private void spawnCentralBoxTrio(){
+	   int b=MathUtils.random(1,4);
+	   if (b!=1){
+		   spawnMine(2, 0);
+	   }
+	   if (b!=2){
+		   spawnMine(-2, 0);
+	   }
+	   if (b!=3){
+		   spawnMine(2, 4);
+	   }
+	   if (b!=4){
+		   spawnMine(-2, 4);
+	   }
+   }
+   
+   private void spawnCentralDiamondTrio(){
+	   int b=MathUtils.random(1,4);
+	   if (b!=1){
+		   spawnMine(0, 0);
+	   }
+	   if (b!=2){
+		   spawnMine(-2, 2);
+	   }
+	   if (b!=3){
+		   spawnMine(+2, 2);
+	   }
+	   if (b!=4){
+		   spawnMine(0, 4);
+	   }
+   }
+   
+   private void spawnMXableTrio(){
+	   int a=plusorminus()*MathUtils.random(4,6);
+	   int b=MathUtils.random(1,3);
+	   spawnMine(a, 0);
+	   spawnMine(0, b);
+	   spawnMine(-a, 2*b);
    }
    
    private void spawn_horizontal_i_shield(float x,float y) {
@@ -621,16 +731,16 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l5(){
-	   if (seconds%5==0 && seconds<200){
+		  if (seconds%5==0 && seconds<200){
 			  int k=MathUtils.random(1,4);
 			  if (k==1){
-				  spawnHorPair();
-			  }
-			  if (k==2){
 				  spawnLittleCirclePair();
 			  }
+			  if (k==2){
+				  spawnMirroredHorPair();
+			  }
 			  if (k==3){
-				  spawnHorTrio();
+				  spawnMirroredHorPair_offset();
 			  }
 			  if (k==4){
 				  spawnVertPair();
@@ -639,13 +749,58 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l6(){
-	   wave_l4();
+	   if (seconds%20==12 && seconds<200){
+		   int k=MathUtils.random(1,2);
+		   if (k==1){
+			   spawnBoxQuartet();
+		   }
+		   if (k==2){
+			   spawnDiamondQuartet();
+		   }
+	   }
+	   else{
+		   wave_l4();
+	   }
    }
+   
    private void wave_l7(){
-	   wave_l4();
+	   if (seconds%5==0 && seconds<200){
+		  int k=MathUtils.random(1,6);
+		  if (k==1 || k==2){
+			  spawnHorTrio();
+		  }
+		  if (k==3){
+			  spawnVertTrio();
+		  }
+		  if (k==4){
+			  spawnCentralBoxTrio();
+		  }
+		  if (k==5){
+			  spawnCentralDiamondTrio();
+		  }
+	  }
    }
+   
+   
    private void wave_l8(){
-	   wave_l4();
+	   if (seconds%5==0 && seconds<200){
+		   int k=MathUtils.random(1,5);
+		   if (k==1){
+			   spawnHorTrio();
+		   }
+		   if (k==2){
+			   spawnVertTrio();
+		   }
+		   if (k==3){
+			   spawnMXableTrio();
+		   }
+		   if (k==4){
+			   spawnBoxTrio();
+		   }
+		   if (k==5){
+			   spawnDiamondTrio();
+		   }
+	   }
    }
    
    //private void cycle_the_lists(){
@@ -672,9 +827,9 @@ public class GameScreen_2 implements Screen {
       
       //--Adjust actual time and upd8--
       
-      if (total_time>(last_charge_event_time+3)){
+      if (total_time>(last_charge_event_time+1)){
     	  last_charge_event_time=total_time;
-    	  charges=Math.min(charges+3, maxcharges);
+    	  charges=Math.min(charges+1, maxcharges);
       }
       
 	  //--Update ship image used--
@@ -725,6 +880,7 @@ public class GameScreen_2 implements Screen {
     	  //rounded_posn_y=Math.round((float)posn_y)/10;
     	  xd=posn_x-prev_rounded_posn_x;
     	  yd=posn_y-prev_rounded_posn_y;
+    	  radius=Math.sqrt(xd*xd+yd*yd);
       }
       
       dot.x=(float)(rounded_posn_x*UNIT_LENGTH_IN_PIXELS+160);
@@ -784,7 +940,7 @@ public class GameScreen_2 implements Screen {
 	      if(CURRENT_LINE=="Circle_line"){
 	    	  //batch.draw(dotImage, actual_dot.x-5, actual_dot.y-5);
 	    	  
-	    	  radius=Math.sqrt(xd*xd+yd*yd);
+	    	  
 	    	  //radius=Math.max(radius, 0.5);
 	    	  if (radius<6){
 	    		  //batch.draw(circles_tr[(int)Math.round(radius)], (float)(actual_dot.x-radius*UNIT_LENGTH_IN_PIXELS), (float)(actual_dot.y-radius*UNIT_LENGTH_IN_PIXELS), actual_dot.x, actual_dot.y, (float)(2*Math.round(radius)), (float)(2*Math.round(radius)), (float)(radius/Math.round(radius)), (float)(radius/Math.round(radius)), 0);
@@ -802,9 +958,13 @@ public class GameScreen_2 implements Screen {
       batch.draw(menu_button_t,265,455);
       
 	  batch.draw(ib_back_large, 20, 480-25);
+	  if (line_list.length>1){
 	  batch.draw(ib_back_large, 20, 480-50);
+	  }
+	  if (line_list.length>2){
 	  batch.draw(ib_back_large, 20, 480-75);
-
+	  }
+	  
 	  DecimalFormat df = new DecimalFormat("#.#");
       DecimalFormat df_two = new DecimalFormat("#");
       DecimalFormat df_three = new DecimalFormat("#.##");
@@ -817,7 +977,7 @@ public class GameScreen_2 implements Screen {
       int [] n = {0,1,2};
 
       for(int i : n ){
-    	  if (!(CURRENT_LINE!="" && picked==i)){
+    	  if (!(CURRENT_LINE!="" && picked==i) && i<line_list.length){
     		  if (line_list[i]=="Horizontal"){
     	    	  font.draw(batch, "y = b", 20+3, 480-25-25*i+17);
     	      }
@@ -1116,11 +1276,11 @@ public class GameScreen_2 implements Screen {
       }
       
       if (Gdx.input.isKeyJustPressed(Keys.DOWN)){
-    	  picked=(picked+1)%3;
+    	  picked=(picked+1)%line_list.length;
     	  CURRENT_LINE=line_list[picked];
       }
       if (Gdx.input.isKeyJustPressed(Keys.UP)){
-    	  picked=(picked+2)%3;
+    	  picked=(picked-1+line_list.length)%line_list.length;
     	  CURRENT_LINE=line_list[picked];
       }
       
