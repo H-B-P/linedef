@@ -186,8 +186,10 @@ public class GameScreen_2 implements Screen {
       
       menu_button_t=new Texture(Gdx.files.internal("button_menu_smol.png"));
       
+      score=MINESPEED/5;
+      
       //--Set zeroes to zero--
-      score=0;
+      
       
       posn_x=0;
       posn_y=0;
@@ -749,7 +751,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l6(){
-	   if (seconds%20==12 && seconds<200){
+	   if (seconds%16==12 && seconds<200){
 		   int k=MathUtils.random(1,2);
 		   if (k==1){
 			   spawnBoxQuartet();
@@ -764,7 +766,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l7(){
-	   if (seconds%4==0 && seconds<200){
+	   if (seconds%5==0 && seconds<200){
 		  int k=MathUtils.random(1,4);
 		  if (k==1 || k==2){
 			  spawnHorTrio();
@@ -780,7 +782,7 @@ public class GameScreen_2 implements Screen {
    
    
    private void wave_l8(){
-	   if (seconds%4==0 && seconds<200){
+	   if (seconds%5==0 && seconds<200){
 		   int k=MathUtils.random(1,5);
 		   if (k==1){
 			   spawnHorTrio();

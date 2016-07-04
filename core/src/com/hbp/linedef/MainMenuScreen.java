@@ -250,16 +250,19 @@ public class MainMenuScreen implements Screen {
 		game.batch.draw(nxt_t, selector_nxt_r.x, selector_nxt_r.y);
 		font.draw(game.batch, ""+MINESPEED, selector_r.x+60, selector_r.y+25);
 		game.batch.draw(but_instructions_t, but_instructions_r.x, but_instructions_r.y);
-		if (are_instructions_visible){
-			game.batch.draw(instructions_t, instructions_r.x, instructions_r.y);
-		}
 		
-		//
 		if (GENRE=="LINE"){
 			game.batch.draw(nxt_t, nxt_r.x, nxt_r.y);
 		}else{
 			game.batch.draw(prv_t, prv_r.x, prv_r.y);
 		}
+		
+		if (are_instructions_visible){
+			game.batch.draw(instructions_t, instructions_r.x, instructions_r.y);
+		}
+		
+		//
+		
 		game.batch.end();
 
 		if (Gdx.input.justTouched()) {
