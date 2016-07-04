@@ -238,7 +238,7 @@ public class GameScreen_2 implements Screen {
       scorefont.setColor(Color.BLACK);
       greenfont = new BitmapFont();
       greenfont.setColor(Color.GREEN);
-      maxcharges=3;
+      maxcharges=2;
       charges=0;
       
       //--Batch, Camera, Action--
@@ -701,7 +701,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l3(){
-	   if (seconds%5==0 && seconds<200){
+	   if (seconds%4==0 && seconds<200){
 			  int k=MathUtils.random(1,3);
 			  if (k==1){
 				  spawnHorPair();
@@ -713,7 +713,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l4(){
-		  if (seconds%5==0 && seconds<200){
+		  if (seconds%4==0 && seconds<200){
 			  int k=MathUtils.random(1,4);
 			  if (k==1){
 				  spawnMXablePair_points_right();
@@ -731,7 +731,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l5(){
-		  if (seconds%5==0 && seconds<200){
+		  if (seconds%4==0 && seconds<200){
 			  int k=MathUtils.random(1,4);
 			  if (k==1){
 				  spawnLittleCirclePair();
@@ -764,7 +764,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l7(){
-	   if (seconds%5==0 && seconds<200){
+	   if (seconds%4==0 && seconds<200){
 		  int k=MathUtils.random(1,4);
 		  if (k==1 || k==2){
 			  spawnHorTrio();
@@ -780,7 +780,7 @@ public class GameScreen_2 implements Screen {
    
    
    private void wave_l8(){
-	   if (seconds%5==0 && seconds<200){
+	   if (seconds%4==0 && seconds<200){
 		   int k=MathUtils.random(1,5);
 		   if (k==1){
 			   spawnHorTrio();
@@ -808,7 +808,7 @@ public class GameScreen_2 implements Screen {
    //}
    
    private void after_shot(){
-	   charges-=3;
+	   charges-=2;
 	   last_charge_event_time=total_time;
 	   CURRENT_LINE=line_list[picked];
    }
@@ -899,7 +899,7 @@ public class GameScreen_2 implements Screen {
     	  CURRENT_LINE="General_line";    			  
       }
       
-      if (charges>2){
+      if (charges>1){
 	      if(CURRENT_LINE=="Horizontal"){
 	    	  batch.draw(i_shield_tr, -90, dot.y-3, 500, 0, 500f, 5f, 1f, 1f, 0f, true);
 	      }
@@ -1303,7 +1303,7 @@ public class GameScreen_2 implements Screen {
     			  CURRENT_LINE=line_list[2];
     		  }
     		  else{
-    			  if( charges>2 && IS_TIME_HAPPENING){
+    			  if( charges>1 && IS_TIME_HAPPENING){
     				  if (CURRENT_LINE=="Horizontal"){
     					  spawn_horizontal_i_shield(0, dot.y);
     					  //score-=1;
