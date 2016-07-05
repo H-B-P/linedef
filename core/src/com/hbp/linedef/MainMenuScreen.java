@@ -90,10 +90,10 @@ public class MainMenuScreen implements Screen {
 		}
 		
 		if (GENRE=="CIRCLE"){
-			score_one=prefs.getInteger("score_CIRCLE_1");
-			score_two=prefs.getInteger("score_CIRCLE_2");
-			score_three=prefs.getInteger("score_CIRCLE_3");
-			score_four=prefs.getInteger("score_CIRCLE_4");
+			score_one=prefs.getInteger("score_CIRCLE_5");
+			score_two=prefs.getInteger("score_CIRCLE_6");
+			score_three=prefs.getInteger("score_CIRCLE_7");
+			score_four=prefs.getInteger("score_CIRCLE_8");
 			
 			one_t = new Texture(Gdx.files.internal("button_circles_ori.png"));
 			two_t = new Texture(Gdx.files.internal("button_circles_arb.png"));
@@ -240,7 +240,7 @@ public class MainMenuScreen implements Screen {
 		font.draw(game.batch, "SCORE:", four_r.x+180, four_r.y+35);
 		font.draw(game.batch, df.format(score_four), four_r.x+250, four_r.y+35);
 		
-		game.batch.draw(LIBRARY_t, LIBRARY_r.x, LIBRARY_r.y);
+		//game.batch.draw(LIBRARY_t, LIBRARY_r.x, LIBRARY_r.y);
 		font.draw(game.batch, "GENRE:  " + GENRE, 170, 420);
 		
 		//font.draw(game.batch, "MINE SPEED:  " + "LOW", 10, 460);
@@ -272,7 +272,7 @@ public class MainMenuScreen implements Screen {
 				if (selector_prv_r.contains(tp_x, 480-tp_y) && MINESPEED>40){
 					MINESPEED-=5;
 				}
-				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<150){
+				if (selector_nxt_r.contains(tp_x, 480-tp_y) && MINESPEED<100){
 					MINESPEED+=5;
 				}
 				
@@ -305,19 +305,19 @@ public class MainMenuScreen implements Screen {
 				}
 				if (GENRE=="CIRCLE"){
 					if (one_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 5));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "CIRCLE", 5));
 			            dispose();
 					}
 					if (two_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 6));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "CIRCLE", 6));
 			            dispose();
 					}
 					if (three_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 7));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "CIRCLE", 7));
 			            dispose();
 					}
 					if (four_r.contains(tp_x,480-tp_y)){
-			            game.setScreen(new GameScreen_2(game, MINESPEED, "LINE", 8));
+			            game.setScreen(new GameScreen_2(game, MINESPEED, "CIRCLE", 8));
 			            dispose();
 					}
 					

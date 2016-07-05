@@ -501,7 +501,7 @@ public class GameScreen_2 implements Screen {
    
    private void spawnMirroredHorPair_offset(){
 	   int a=plusorminus()*MathUtils.random(2,6);
-	   int b=MathUtils.random(1,4);
+	   int b=MathUtils.random(3,4);
 	   spawnMine(a, 0);
 	   spawnMine(-a, b);
    }
@@ -715,7 +715,7 @@ public class GameScreen_2 implements Screen {
    }
    
    private void wave_l4(){
-		  if (seconds%4==0 && seconds<200){
+		  if (seconds%5==0 && seconds<200){
 			  int k=MathUtils.random(1,4);
 			  if (k==1){
 				  spawnMXablePair_points_right();
@@ -760,8 +760,20 @@ public class GameScreen_2 implements Screen {
 			   spawnDiamondQuartet();
 		   }
 	   }
-	   else{
-		   wave_l4();
+	   else if (seconds%4==0 && seconds<200){
+		  int k=MathUtils.random(1,4);
+		  if (k==1){
+			  spawnMXablePair_points_right();
+		  }
+		  if (k==2){
+			  spawnMXablePair_points_left();
+		  }
+		  if (k==3){
+			  spawnHorPair();
+		  }
+		  if (k==4){
+			  spawnVertPair();
+		  }
 	   }
    }
    
